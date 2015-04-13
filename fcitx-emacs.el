@@ -240,12 +240,25 @@
                                      func-name
                                      "-turn-off"))))
     `(progn
-       (defun ,turn-on-func-name ()
-         (interactive)
-         (advice-add ,command :around #'fcitx-emacs--minibuffer))       
-       (defun ,turn-off-func-name ()
-         (interactive)
-         (advice-remove ,command #'fcitx-emacs--minibuffer)))))
+       (if (fboundp 'advice-add)
+           (progn
+             (defun ,turn-on-func-name ()
+               (interactive)
+               (advice-add ,command :around #'fcitx-emacs--minibuffer))       
+             (defun ,turn-off-func-name ()
+               (interactive)
+               (advice-remove ,command #'fcitx-emacs--minibuffer)))
+         (defadvice ,(cadr command) (around ,turn-on-func-name)
+           (fcitx-emacs--minibuffer-maybe-deactivate)
+           (unwind-protect
+               ad-do-it
+             (fcitx-emacs--minibuffer-maybe-activate)))
+         (defun ,turn-on-func-name ()
+           (interactive)
+           (ad-activate ,command))       
+         (defun ,turn-off-func-name ()
+           (interactive)
+           (ad-deactivate ,command))))))
 
 ;;;###autoload (autoload 'fcitx-emacs-M-x-turn-on "fcitx-emacs" "Enable `M-x' support" t)
 ;;;###autoload (autoload 'fcitx-emacs-M-x-turn-off "fcitx-emacs" "Disable `M-x' support" t)
