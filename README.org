@@ -67,6 +67,9 @@ This package provides a set of functions to make fcitx work better in Emacs.
   : (fcitx-emacs-eval-expression-turn-on)
   to disable fcitx temporarily in these commands.
 
+  =M-x= should work with the original =M-x= (=execute-extended-command=), =smex=
+  and =helm-M-x=.
+
   Again, =M-x fcitx-emacs-default-setup= enables all these three features.
 
 * TODO TODO

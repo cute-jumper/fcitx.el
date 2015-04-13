@@ -69,7 +69,7 @@
 ;;   above things, i.e. adding "C-x" and "C-c" to be prefix keys and enabling this
 ;;   feature, for you.
 
-;; * Evil support
+;; * Evil Support
 ;;   To disable fcitx when you exiting "insert mode" and enable fcitx after
 ;;   entering "insert mode" if originally you enable it in "insert mode":
 ;;   : (fcitx-emacs-evil-turn-on)
@@ -80,7 +80,7 @@
 
 ;;   Similarly, =M-x fcitx-emacs-default-setup= enables this feature.
 
-;; * =M-x=, =M-!=, =M-&= and =M-:=
+;; * =M-x=, =M-!=, =M-&= and =M-:= Support
 ;;   Usually you don't want to type Chinese when you use =M-x=, =M-!=
 ;;   (=shell-command=), =M-&= (=async-shell-command=) or =M-:= (=eval-expression=).
 ;;   You can use:
@@ -89,9 +89,12 @@
 ;;   : (fcitx-emacs-eval-expression-turn-on)
 ;;   to disable fcitx temporarily in these commands.
 
+;;   =M-x= should work with the original =M-x= (=execute-extended-command=), =smex=
+;;   and =helm-M-x=.
+
 ;;   Again, =M-x fcitx-emacs-default-setup= enables all these three features.
 
-;; * TODO
+;; * TODO TODO
 ;;   - Better Evil support
 ;;   - Add =key-chord= support
 
@@ -246,7 +249,16 @@
          (advice-remove ,command #'fcitx-emacs--minibuffer))
        (autoload ',turn-off-func-name "fcitx-emacs"))))
 
-(fcitx-emacs-minibuffer-on-off "M-x" (key-binding (kbd "M-x")))
+(let ((M-x-cmd (key-binding (kbd "M-x"))))
+  (cond
+   ((eq M-x-cmd 'execute-extended-command)
+    (fcitx-emacs-minibuffer-on-off "M-x" 'read-extended-command))
+   ((or (eq M-x-cmd 'smex)
+        (eq M-x-cmd 'helm-M-x))
+    (fcitx-emacs-minibuffer-on-off "M-x" 'smex))
+   (t
+    (error "I don't know your `M-x' binding command.
+ Only support original M-x, `smex' and `helm-M-x'"))))
 (fcitx-emacs-minibuffer-on-off "shell-command" 'read-shell-command)
 (fcitx-emacs-minibuffer-on-off "eval-expression" 'read--expression)
 
