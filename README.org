@@ -47,7 +47,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
   above things, i.e. adding "C-x" and "C-c" to be prefix keys and enabling this
   feature, for you.
 
-* Evil support
+* Evil Support
   To disable fcitx when you exiting "insert mode" and enable fcitx after
   entering "insert mode" if originally you enable it in "insert mode":
   : (fcitx-emacs-evil-turn-on)
@@ -58,7 +58,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
 
   Similarly, =M-x fcitx-emacs-default-setup= enables this feature.
 
-* =M-x=, =M-!=, =M-&= and =M-:=
+* =M-x=, =M-!=, =M-&= and =M-:= Support
   Usually you don't want to type Chinese when you use =M-x=, =M-!=
   (=shell-command=), =M-&= (=async-shell-command=) or =M-:= (=eval-expression=).
   You can use:
@@ -69,7 +69,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
 
   Again, =M-x fcitx-emacs-default-setup= enables all these three features.
 
-* TODO
+* TODO TODO
   - Better Evil support
   - Add =key-chord= support
 
