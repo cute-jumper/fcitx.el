@@ -242,13 +242,13 @@
     `(progn
        (defun ,turn-on-func-name ()
          (interactive)
-         (advice-add ,command :around #'fcitx-emacs--minibuffer))
-       (autoload 'fcitx-emacs-M-x-turn-on "fcitx-emacs")
+         (advice-add ,command :around #'fcitx-emacs--minibuffer))       
        (defun ,turn-off-func-name ()
          (interactive)
-         (advice-remove ,command #'fcitx-emacs--minibuffer))
-       (autoload ',turn-off-func-name "fcitx-emacs"))))
+         (advice-remove ,command #'fcitx-emacs--minibuffer)))))
 
+;;;###autoload (autoload 'fcitx-emacs-M-x-turn-on "fcitx-emacs" "Enable `M-x' support" t)
+;;;###autoload (autoload 'fcitx-emacs-M-x-turn-off "fcitx-emacs" "Disable `M-x' support" t)
 (let ((M-x-cmd (key-binding (kbd "M-x"))))
   (cond
    ((eq M-x-cmd 'execute-extended-command)
@@ -259,7 +259,13 @@
    (t
     (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'"))))
+
+;;;###autoload (autoload 'fcitx-emacs-shell-command-turn-on "fcitx-emacs" "Enable `shell-command' support" t)
+;;;###autoload (autoload 'fcitx-emacs-shell-command-turn-off "fcitx-emacs" "Disable `shell-command' support" t)
 (fcitx-emacs-minibuffer-on-off "shell-command" 'read-shell-command)
+
+;;;###autoload (autoload 'fcitx-emacs-eval-expression-turn-on "fcitx-emacs" "Enable `shell-command' support" t)
+;;;###autoload (autoload 'fcitx-emacs-eval-expression-turn-off "fcitx-emacs" "Disable `eval-expression' support" t)
 (fcitx-emacs-minibuffer-on-off "eval-expression" 'read--expression)
 
 ;;;###autoload
