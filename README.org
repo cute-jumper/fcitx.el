@@ -1,16 +1,16 @@
-#+TITLE: fcitx-emacs
+#+TITLE: fcitx.el
 Make [[https://github.com/fcitx/fcitx/][fcitx]] better in Emacs.
 
 This package provides a set of functions to make fcitx work better in Emacs.
 
 * Setup
-  : (add-to-list 'load-path "/path/to/fcitx-emacs.el")
-  : (require 'fcitx-emacs)
+  : (add-to-list 'load-path "/path/to/fcitx.el")
+  : (require 'fcitx)
 
   Recommended though optional:
-  : M-x fcitx-emacs-default-setup
+  : M-x fcitx-default-setup
 
-  Calling =fcitx-emacs-default-setup= will enable all the features that this
+  Calling =fcitx-default-setup= will enable all the features that this
   package provides and use default settings. See the following sections for
   details.
 
@@ -28,49 +28,49 @@ This package provides a set of functions to make fcitx work better in Emacs.
   that you can directly type "b" after "C-x" and after you press "b", fcitx will
   be activated again so you can still type Chinese buffer name. To define "C-x"
   to be the prefix key that can temporarily disable fcitx:
-  : (fcitx-emacs-prefix-keys-add "C-x")
+  : (fcitx-prefix-keys-add "C-x")
 
   Usually, defining "C-x" and "C-c" to be such prefix keys is enough for most
   users. You can simply use following command:
-  : (fcitx-emacs-prefix-keys-setup)
+  : (fcitx-prefix-keys-setup)
   to add "C-x" and "C-c".
 
   After defining prefix keys, you need to call 
-  : (fcitx-emacs-prefix-keys-turn-on)
+  : (fcitx-prefix-keys-turn-on)
   to enable this feature.
 
   Of course, you can use
-  : (fcitx-emacs-prefix-keys-turn-off)
+  : (fcitx-prefix-keys-turn-off)
   to disable this feature.
 
-  Note if you use =M-x fcitx-emacs-default-setup=, then it already does all the
+  Note if you use =M-x fcitx-default-setup=, then it already does all the
   above things, i.e. adding "C-x" and "C-c" to be prefix keys and enabling this
   feature, for you.
 
 * Evil Support
   To disable fcitx when you exiting "insert mode" and enable fcitx after
   entering "insert mode" if originally you enable it in "insert mode":
-  : (fcitx-emacs-evil-turn-on)
+  : (fcitx-evil-turn-on)
 
   It currently only works for "entering" and "exiting" the insert state for a
   certain buffer and it didn't have a separate fcitx state for each
   buffer(although it behaves like this under certain conditions).
 
-  Similarly, =M-x fcitx-emacs-default-setup= enables this feature.
+  Similarly, =M-x fcitx-default-setup= enables this feature.
 
 * =M-x=, =M-!=, =M-&= and =M-:= Support
   Usually you don't want to type Chinese when you use =M-x=, =M-!=
   (=shell-command=), =M-&= (=async-shell-command=) or =M-:= (=eval-expression=).
   You can use:
-  : (fcitx-emacs-M-x-turn-on)
-  : (fcitx-emacs-shell-command-turn-on)
-  : (fcitx-emacs-eval-expression-turn-on)
+  : (fcitx-M-x-turn-on)
+  : (fcitx-shell-command-turn-on)
+  : (fcitx-eval-expression-turn-on)
   to disable fcitx temporarily in these commands.
 
   =M-x= should work with the original =M-x= (=execute-extended-command=), =smex=
   and =helm-M-x=.
 
-  Again, =M-x fcitx-emacs-default-setup= enables all these three features.
+  Again, =M-x fcitx-default-setup= enables all these three features.
 
 * TODO TODO
   - Better Evil support
