@@ -260,8 +260,8 @@
            (interactive)
            (ad-deactivate ,command))))))
 
-;;;###autoload (autol-M-x-turn" "Enable `M-x' support" t)
-;;;###autoload (autol-M-x-turn-" "Disable `M-x' support" t)
+;;;###autoload (autoload 'fcitx-M-x-turn-on "fcitx" "Enable `M-x' support" t)
+;;;###autoload (autoload 'fcitx-M-x-turn-off "fcitx" "Disable `M-x' support" t)
 (let ((M-x-cmd (key-binding (kbd "M-x"))))
   (cond
    ((eq M-x-cmd 'execute-extended-command)
@@ -273,12 +273,12 @@
     (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'"))))
 
-;;;###autoload (autol-shell-command-turn" "Enable `shell-command' support" t)
-;;;###autoload (autol-shell-command-turn-" "Disable `shell-command' support" t)
+;;;###autoload (autoload 'fcitx-shell-command-turn-on "fcitx" "Enable `shell-command' support" t)
+;;;###autoload (autoload 'fcitx-shell-command-turn-off "fcitx" "Disable `shell-command' support" t)
 (fcitx-defun-minibuffer-on-off "shell-command" 'read-shell-command)
 
-;;;###autoload (autol-eval-expression-turn" "Enable `shell-command' support" t)
-;;;###autoload (autol-eval-expression-turn-" "Disable `eval-expression' support" t)
+;;;###autoload (autoload 'fcitx-eval-expression-turn-on "fcitx" "Enable `shell-command' support" t)
+;;;###autoload (autoload 'fcitx-eval-expression-turn-off "fcitx" "Disable `eval-expression' support" t)
 (fcitx-defun-minibuffer-on-off "eval-expression" 'read--expression)
 
 ;;;###autoload
