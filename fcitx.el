@@ -45,7 +45,7 @@
 ;;   because the second key "b" will be blocked by fcitx(and you need to press
 ;;   "enter" in order to send "b" to emacs). This package provides a way
 ;;   to define the prefix keys after which you can temporarily disable fcitx.
-  
+
 ;;   For example, you want to temporarily disable fcitx after you press "C-x" so
 ;;   that you can directly type "b" after "C-x" and after you press "b", fcitx will
 ;;   be activated again so you can still type Chinese buffer name. To define "C-x"
@@ -57,7 +57,7 @@
 ;;   : (fcitx-prefix-keys-setup)
 ;;   to add "C-x" and "C-c".
 
-;;   After defining prefix keys, you need to call 
+;;   After defining prefix keys, you need to call
 ;;   : (fcitx-prefix-keys-turn-on)
 ;;   to enable this feature.
 
@@ -74,9 +74,15 @@
 ;;   entering "insert mode" if originally you enable it in "insert mode":
 ;;   : (fcitx-evil-turn-on)
 
-;;   It currently only works for "entering" and "exiting" the insert state for a
-;;   certain buffer and it didn't have a separate fcitx state for each
-;;   buffer(although it behaves like this under certain conditions).
+;;   It currently should work well for "entering" and "exiting" the insert state.
+;;   It will also disable fcitx if you use =switch-to-buffer= or =other-window= to
+;;   switch to a buffer which is not in insert state or Emacs state. For example,
+;;   if you're currently in insert mode in buffer =A= and you've enabled fcitx,
+;;   then you call =switch-to-buffer= to switch to another buffer =B=, which is
+;;   currently, say, in normal mode, then fcitx will be disabled in buffer =B=.
+
+;;   Note that currently the Evil support is not perfect. If you come across any
+;;   bugs, consider file an issue or creating a pull request.
 
 ;;   Similarly, =M-x fcitx-default-setup= enables this feature.
 
@@ -122,7 +128,7 @@
 (defun fcitx--deactivate ()
   (call-process-shell-command "fcitx-remote -c"))
 
-(defun fcitx--is-active ()
+(defun fcitx--active-p ()
   (char-equal
    (aref (shell-command-to-string "fcitx-remote") 0) ?2))
 
@@ -142,7 +148,7 @@
     `(progn
        (defvar ,var-symbol nil)
        (defun ,deactivate-symbol ()
-         (when (fcitx--is-active)
+         (when (fcitx--active-p)
            (fcitx--deactivate)
            (setq ,var-symbol t)))
        (defun ,activate-symbol ()
@@ -155,13 +161,16 @@
 ;; ------------------- ;;
 (fcitx--defun-maybe "prefix-keys")
 
+
 (defun fcitx--prefix-keys-polling-function ()
   "Polling function executed every `fcitx-prefix-keys-polling-time'."
   (let ((key-seq (this-single-command-keys)))
     (cond
      ((member key-seq fcitx--prefix-keys-sequence)
       (fcitx--prefix-keys-maybe-deactivate))
-     ((equal (this-command-keys-vector) [])
+     ((and (equal (this-command-keys-vector) [])
+           (not (equal last-command 'switch-to-buffer))
+           (not (equal last-command 'other-window)))
       (fcitx--prefix-keys-maybe-activate)))))
 
 ;;;###autoload
@@ -199,6 +208,37 @@
 (fcitx--defun-maybe "evil-insert")
 (make-variable-buffer-local 'fcitx--evil-insert-disabled-by-elisp)
 
+(defvar fcitx--evil-saved-active-p nil
+  "Remember the fcitx state for each buffer")
+(make-variable-buffer-local 'fcitx--evil-saved-active-p)
+
+(defun fcitx--evil-should-disable-fcitx-p ()
+  (not (or (evil-emacs-state-p)
+           (evil-insert-state-p))))
+
+;;FIX: cooperate with prefix keys
+(defun fcitx--evil-switch-buffer (orig-func &rest args)
+  ;; before switch
+  (when (and evil-mode
+             (not (window-minibuffer-p)))
+    ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
+    (setq fcitx--evil-saved-active-p
+          (or (fcitx--active-p)
+              fcitx--prefix-keys-disabled-by-elisp))
+    (setq fcitx--prefix-keys-disabled-by-elisp))
+
+  ;; switch buffer
+  (apply orig-func args)
+  ;; after switch
+  (when (and evil-mode
+             (not (window-minibuffer-p)))
+    (cond
+     ((fcitx--evil-should-disable-fcitx-p)
+      (fcitx--deactivate))
+     (fcitx--evil-saved-active-p
+      (fcitx--activate)))
+    (setq fcitx--evil-saved-active-p)))
+
 ;;;###autoload
 (defun fcitx-evil-turn-on ()
   (interactive)
@@ -207,7 +247,11 @@
        (add-hook 'evil-insert-state-exit-hook
                  #'fcitx--evil-insert-maybe-deactivate)
        (add-hook 'evil-insert-state-entry-hook
-                 #'fcitx--evil-insert-maybe-activate))))
+                 #'fcitx--evil-insert-maybe-activate)
+       (advice-add 'switch-to-buffer :around
+                   #'fcitx--evil-switch-buffer)
+       (advice-add 'other-window :around
+                   #'fcitx--evil-switch-buffer))))
 
 ;;;###autoload
 (defun fcitx-evil-turn-off ()
@@ -217,7 +261,11 @@
        (remove-hook 'evil-insert-state-exit-hook
                     #'fcitx--evil-insert-maybe-deactivate)
        (remove-hook 'evil-insert-state-entry-hook
-                    #'fcitx--evil-insert-maybe-activate))))
+                    #'fcitx--evil-insert-maybe-activate)
+       (advice-remove 'switch-to-buffer
+                      #'fcitx--evil-switch-buffer)
+       (advice-remove 'other-window
+                      #'fcitx--evil-switch-buffer))))
 
 ;; ----------------------------- ;;
 ;; M-x, M-!, M-& and M-: support ;;
@@ -244,7 +292,7 @@
            (progn
              (defun ,turn-on-func-name ()
                (interactive)
-               (advice-add ,command :around #'fcitx--minibuffer))       
+               (advice-add ,command :around #'fcitx--minibuffer))
              (defun ,turn-off-func-name ()
                (interactive)
                (advice-remove ,command #'fcitx--minibuffer)))
@@ -255,7 +303,7 @@
              (fcitx--minibuffer-maybe-activate)))
          (defun ,turn-on-func-name ()
            (interactive)
-           (ad-activate ,command))       
+           (ad-activate ,command))
          (defun ,turn-off-func-name ()
            (interactive)
            (ad-deactivate ,command))))))
@@ -298,4 +346,3 @@
 
 (provide 'fcitx)
 ;;; fcitx.el ends here
-

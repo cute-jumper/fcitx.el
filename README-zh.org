@@ -1,0 +1,72 @@
+#+TITLE: fcitx.el
+优化fcitx在Emacs中的使用体验
+
+这个扩展提供一系列的功能让fcitx能更好地在Emacs中使用。
+
+* 安装
+  : (add-to-list 'load-path "/path/to/fcitx.el")
+  : (require 'fcitx)
+  
+  推荐安装后使用下面的命令完成配置：
+  : M-x fcitx-default-setup
+
+  使用 =fcitx-default-setup= 会开启所有的功能，并且使用默认的配置。详见下文。
+
+  对于每一个功能，都有对应的 =*-turn-on= 和 =*-turn-off= 命令用来开启或者关闭该
+  功能。
+
+* 通过prefix keys来暂时禁用fcitx
+  在开启了fcitx以后，如果要用 "C-x b" 来切换buffer比较麻烦，因为第二个按键 "b"
+  会被输入法拦截，必须再按一个回车才能输入 "b"。所以这个扩展提供了一个可以通过自
+  定义prefix keys来暂时禁用fcitx的功能。比如这个例子中，可以让 "C-x" 成为这样的
+  一个prefix key，按下 "C-x" 之后fcitx就被暂时禁用了，可以直接输入 "b" 进行
+  buffer切换。按下 "b" 进入buffer切换界面的时候输入法又将被激活，因此你可以输入
+  中文的buffer名。用以下命令定义 "C-x" 为这样的一个prefix key
+  : (fcitx-prefix-keys-add "C-x")
+
+  通常定义 "C-x" 和 "C-c" 为prefix keys就足够了。可以用下面的命令添加 "C-x" 和
+  "C-c"：
+  : (fcitx-prefix-keys-setup)
+
+
+  定义好了自己想要的prefix key以后，用下面的命令开启这个功能：
+  : (fcitx-prefix-keys-turn-on)
+
+  当然，也可以用下列命令关掉这个功能：
+  : (fcitx-prefix-keys-turn-off)
+
+  如果使用了上面的 =M-x fcitx-default-setup=, 那么以上的步骤都帮你做好了（即定义
+  了"C-x" 和 "C-c"，然后也开启了这个功能）。
+
+* Evil支持
+  和fcitx.vim类似，如果你想禁用fcitx当你退出insert mode的时候，然后再次激活fcitx
+  当你进入insert mode的时候，那么可以通过开启下面的功能实现：
+  : (fcitx-evil-turn-on)
+
+  目前对于“进入或者退出insert mode”这种模式应该可以正常工作。如果你用
+  =switch-to-buffer= 或者 =other-window= 切换到一个既不在insert mode也不在emacs
+  mode的buffer，那么fcitx也会被禁用. 比如, 当前你在处于insert mode的buffer =A=
+  ， 并且开启了fcitx， 然后调用了 =switch-to-buffer= 切换到buffer =B= ， 而 =B= 目
+  前处于normal mode, 那么在buffer =B= fcitx也会被禁用。
+
+  当前对Evil的支持还不算完善。如果遇见任何问题，欢迎提交issue或者pull request。
+  
+  如果使用了上面的 =M-x fcitx-default-setup= ，这个功能也会自动被启用
+* =M-x=, =M-!=, =M-&=, =M-:= 支持
+  如果通常你在使用 =M-x=, =M-!= (=shell-command=), =M-&= (=async-shell-command=)
+  或者 =M-:= (=eval-expression=)时并不想输入中文，那么可以使用
+  : (fcitx-M-x-turn-on)
+  : (fcitx-shell-command-turn-on)
+  : (fcitx-eval-expression-turn-on)
+  来在使用这些命令的时候暂时禁用fcitx。
+
+  无论 =M-x= 是原始的 =M-x= 命令(=execute-extended-command=), 或是 =smex= 和
+  =helm-M-x= ，都应该都可以正常工作。
+
+  使用上面的 =M-x fcitx-default-setup= 将默认开始这些功能。
+
+* TODO TODO
+  - 更好的Evil支持
+  - 可能会增加 =key-chord= 支持
+
+  如果有其他好的新的功能，欢迎提交pull request。

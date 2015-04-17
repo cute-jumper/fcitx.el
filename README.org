@@ -1,6 +1,8 @@
 #+TITLE: fcitx.el
 Make [[https://github.com/fcitx/fcitx/][fcitx]] better in Emacs.
 
+[[./README-zh.org][中文版]]
+
 This package provides a set of functions to make fcitx work better in Emacs.
 
 * Setup
@@ -17,7 +19,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
   Note that for every feature, there are both =*-turn-on= and =*-turn-off=
   functions defined, which can enable and disable the corresponding feature,
   respectively.
-
+  
 * Disable Fcitx by Prefix Keys
   If you've enabled fcitx, then you can't easily change your buffer by "C-x b"
   because the second key "b" will be blocked by fcitx(and you need to press
@@ -52,9 +54,15 @@ This package provides a set of functions to make fcitx work better in Emacs.
   entering "insert mode" if originally you enable it in "insert mode":
   : (fcitx-evil-turn-on)
 
-  It currently only works for "entering" and "exiting" the insert state for a
-  certain buffer and it didn't have a separate fcitx state for each
-  buffer(although it behaves like this under certain conditions).
+  It currently should work well for "entering" and "exiting" the insert state.
+  It will also disable fcitx if you use =switch-to-buffer= or =other-window= to
+  switch to a buffer which is not in insert state or Emacs state. For example,
+  if you're currently in insert mode in buffer =A= and you've enabled fcitx,
+  then you call =switch-to-buffer= to switch to another buffer =B=, which is
+  currently, say, in normal mode, then fcitx will be disabled in buffer =B=.
+
+  Note that currently the Evil support is not perfect. If you come across any
+  bugs, consider file an issue or creating a pull request.
 
   Similarly, =M-x fcitx-default-setup= enables this feature.
 
