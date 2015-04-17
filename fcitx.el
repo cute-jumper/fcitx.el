@@ -216,28 +216,68 @@
   (not (or (evil-emacs-state-p)
            (evil-insert-state-p))))
 
-;;FIX: cooperate with prefix keys
-(defun fcitx--evil-switch-buffer (orig-func &rest args)
-  ;; before switch
-  (when (and evil-mode
-             (not (window-minibuffer-p)))
-    ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
-    (setq fcitx--evil-saved-active-p
-          (or (fcitx--active-p)
-              fcitx--prefix-keys-disabled-by-elisp))
-    (setq fcitx--prefix-keys-disabled-by-elisp))
+;;FIX: cooperate with prefix keys and remove redundant code
+(if (fboundp 'advice-add) 
+    (defun fcitx--evil-switch-buffer (orig-func &rest args)
+      ;; before switch
+      (when (and evil-mode
+                 (not (window-minibuffer-p)))
+        ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
+        (setq fcitx--evil-saved-active-p
+              (or (fcitx--active-p)
+                  fcitx--prefix-keys-disabled-by-elisp))
+        (setq fcitx--prefix-keys-disabled-by-elisp))
 
-  ;; switch buffer
-  (apply orig-func args)
-  ;; after switch
-  (when (and evil-mode
-             (not (window-minibuffer-p)))
-    (cond
-     ((fcitx--evil-should-disable-fcitx-p)
-      (fcitx--deactivate))
-     (fcitx--evil-saved-active-p
-      (fcitx--activate)))
-    (setq fcitx--evil-saved-active-p)))
+      ;; switch buffer
+      (apply orig-func args)
+      ;; after switch
+      (when (and evil-mode
+                 (not (window-minibuffer-p)))
+        (cond
+         ((fcitx--evil-should-disable-fcitx-p)
+          (fcitx--deactivate))
+         (fcitx--evil-saved-active-p
+          (fcitx--activate)))
+        (setq fcitx--evil-saved-active-p)))
+  (defadvice switch-to-buffer (around fcitx--evil-switch-buffer-1)
+    (when (and evil-mode
+               (not (window-minibuffer-p)))
+      ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
+      (setq fcitx--evil-saved-active-p
+            (or (fcitx--active-p)
+                fcitx--prefix-keys-disabled-by-elisp))
+      (setq fcitx--prefix-keys-disabled-by-elisp))
+
+    ;; switch buffer
+    ad-do-it
+    ;; after switch
+    (when (and evil-mode
+               (not (window-minibuffer-p)))
+      (cond
+       ((fcitx--evil-should-disable-fcitx-p)
+        (fcitx--deactivate))
+       (fcitx--evil-saved-active-p
+        (fcitx--activate)))
+      (setq fcitx--evil-saved-active-p)))
+  (defadvice other-window (around fcitx--evil-switch-buffer-2)
+    (when (and evil-mode
+               (not (window-minibuffer-p)))
+      ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
+      (setq fcitx--evil-saved-active-p
+            (or (fcitx--active-p)
+                fcitx--prefix-keys-disabled-by-elisp))
+      (setq fcitx--prefix-keys-disabled-by-elisp))
+    ;; switch buffer
+    ad-do-it
+    ;; after switch
+    (when (and evil-mode
+               (not (window-minibuffer-p)))
+      (cond
+       ((fcitx--evil-should-disable-fcitx-p)
+        (fcitx--deactivate))
+       (fcitx--evil-saved-active-p
+        (fcitx--activate)))
+      (setq fcitx--evil-saved-active-p))))
 
 ;;;###autoload
 (defun fcitx-evil-turn-on ()
@@ -248,10 +288,16 @@
                  #'fcitx--evil-insert-maybe-deactivate)
        (add-hook 'evil-insert-state-entry-hook
                  #'fcitx--evil-insert-maybe-activate)
-       (advice-add 'switch-to-buffer :around
-                   #'fcitx--evil-switch-buffer)
-       (advice-add 'other-window :around
-                   #'fcitx--evil-switch-buffer))))
+       (if (fboundp 'advice-add)
+           (progn
+             (advice-add 'switch-to-buffer :around
+                         #'fcitx--evil-switch-buffer)
+             (advice-add 'other-window :around
+                         #'fcitx--evil-switch-buffer))
+         (ad-enable-advice 'switch-to-buffer 'around 'fcitx--evil-switch-buffer-1)
+         (ad-activate 'switch-to-buffer)
+         (ad-enable-advice 'other-window 'around 'fcitx--evil-switch-buffer-2)
+         (ad-activate 'other-window)))))
 
 ;;;###autoload
 (defun fcitx-evil-turn-off ()
@@ -262,10 +308,16 @@
                     #'fcitx--evil-insert-maybe-deactivate)
        (remove-hook 'evil-insert-state-entry-hook
                     #'fcitx--evil-insert-maybe-activate)
-       (advice-remove 'switch-to-buffer
-                      #'fcitx--evil-switch-buffer)
-       (advice-remove 'other-window
-                      #'fcitx--evil-switch-buffer))))
+       (if (fboundp 'advice-add)
+           (progn
+             (advice-remove 'switch-to-buffer
+                            #'fcitx--evil-switch-buffer)
+             (advice-remove 'other-window
+                            #'fcitx--evil-switch-buffer))
+         (ad-disable-advice 'switch-to-buffer 'around 'fcitx--evil-switch-buffer-1)
+         (ad-activate 'switch-to-buffer)
+         (ad-disable-advice 'other-window 'around 'fcitx--evil-switch-buffer-2)
+         (ad-activate 'other-window)))))
 
 ;; ----------------------------- ;;
 ;; M-x, M-!, M-& and M-: support ;;
