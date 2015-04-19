@@ -20,6 +20,8 @@
 
 ;;; Commentary:
 
+;; Chinese version of README: https://github.com/cute-jumper/fcitx.el/blob/master/README-zh.org
+
 ;; #+TITLE: fcitx.el
 ;; Make [[https://github.com/fcitx/fcitx/][fcitx]] better in Emacs.
 
