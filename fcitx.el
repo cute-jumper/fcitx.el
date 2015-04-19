@@ -366,9 +366,10 @@
   (cond
    ((eq M-x-cmd 'execute-extended-command)
     (fcitx-defun-minibuffer-on-off "M-x" 'read-extended-command))
-   ((or (eq M-x-cmd 'smex)
-        (eq M-x-cmd 'helm-M-x))
+   ((eq M-x-cmd 'smex)
     (fcitx-defun-minibuffer-on-off "M-x" 'smex))
+   ((eq M-x-cmd 'helm-M-x)
+    (fcitx-defun-minibuffer-on-off "M-x" 'helm-M-x))
    (t
     (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'"))))
