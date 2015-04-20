@@ -365,9 +365,9 @@
 (defvar fcitx--M-x-binding-command nil
   "The command that `M-x' binds to")
 
-(fcitx-defun-minibuffer-on-off "original-M-x" 'read-extended-command)
-(fcitx-defun-minibuffer-on-off "smex-M-x" 'smex)
-(fcitx-defun-minibuffer-on-off "helm-M-x" 'helm-M-x-read-extended-command)
+(fcitx-defun-minibuffer-on-off "-original-M-x" 'read-extended-command)
+(fcitx-defun-minibuffer-on-off "-smex-M-x" 'smex)
+(fcitx-defun-minibuffer-on-off "-helm-M-x" 'helm-M-x-read-extended-command)
 
 ;;;###autoload
 (defun fcitx-M-x-turn-on ()
@@ -376,11 +376,11 @@
   (let ((M-x-cmd fcitx--M-x-binding-command))
     (cond
      ((eq M-x-cmd 'execute-extended-command)
-      (fcitx-original-M-x-turn-on))
+      (fcitx--original-M-x-turn-on))
      ((eq M-x-cmd 'smex)
-      (fcitx-smex-M-x-turn-on))
+      (fcitx--smex-M-x-turn-on))
      ((eq M-x-cmd 'helm-M-x)
-      (fcitx-helm-M-x-turn-on))
+      (fcitx--helm-M-x-turn-on))
      (t
       (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'")))))
@@ -391,11 +391,11 @@
   (let ((M-x-cmd fcitx--M-x-binding-command))
     (cond
      ((eq M-x-cmd 'execute-extended-command)
-      (fcitx-original-M-x-turn-off))
+      (fcitx--original-M-x-turn-off))
      ((eq M-x-cmd 'smex)
-      (fcitx-smex-M-x-turn-off))
+      (fcitx--smex-M-x-turn-off))
      ((eq M-x-cmd 'helm-M-x)
-      (fcitx-helm-M-x-turn-off))
+      (fcitx--helm-M-x-turn-off))
      (t
       (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'")))))
