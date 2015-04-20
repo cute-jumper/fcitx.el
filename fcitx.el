@@ -367,7 +367,7 @@
 
 (fcitx-defun-minibuffer-on-off "original-M-x" 'read-extended-command)
 (fcitx-defun-minibuffer-on-off "smex-M-x" 'smex)
-(fcitx-defun-minibuffer-on-off "helm-M-x" 'helm-M-x)
+(fcitx-defun-minibuffer-on-off "helm-M-x" 'helm-M-x-read-extended-command)
 
 ;;;###autoload
 (defun fcitx-M-x-turn-on ()
