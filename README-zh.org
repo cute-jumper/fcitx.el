@@ -65,6 +65,10 @@
 
   使用上面的 =M-x fcitx-default-setup= 将默认开始这些功能。
 
+  注意： 如果你重新绑定 =M-x= 到 =smex= 或 =helm-M-x=, 那么你应该在你重新绑定键
+  以后调用 =fcitx-default-setup= 或者 =fcitx-M-x-turn-on= 。
+
+
 * TODO TODO
   - 更好的Evil支持
   - 可能会增加 =key-chord= 支持

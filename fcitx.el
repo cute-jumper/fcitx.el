@@ -102,6 +102,9 @@
 
 ;;   Again, =M-x fcitx-default-setup= enables all these three features.
 
+;;   Note: If you rebind =M-x= to =smex= or =helm-M-x=, then you should call
+;;   =fcitx-default-setup= or =fcitx-M-x-turn-on= *after* the rebinding.
+
 ;; * TODO TODO
 ;;   - Better Evil support
 ;;   - Add =key-chord= support
