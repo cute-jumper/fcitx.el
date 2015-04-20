@@ -219,7 +219,7 @@
            (evil-insert-state-p))))
 
 ;;FIX: cooperate with prefix keys and remove redundant code
-(if (fboundp 'advice-add) 
+(if (fboundp 'advice-add)
     (defun fcitx--evil-switch-buffer (orig-func &rest args)
       ;; before switch
       (when (and evil-mode
@@ -362,19 +362,43 @@
            (interactive)
            (ad-deactivate ,command))))))
 
-;;;###autoload (autoload 'fcitx-M-x-turn-on "fcitx" "Enable `M-x' support" t)
-;;;###autoload (autoload 'fcitx-M-x-turn-off "fcitx" "Disable `M-x' support" t)
-(let ((M-x-cmd (key-binding (kbd "M-x"))))
-  (cond
-   ((eq M-x-cmd 'execute-extended-command)
-    (fcitx-defun-minibuffer-on-off "M-x" 'read-extended-command))
-   ((eq M-x-cmd 'smex)
-    (fcitx-defun-minibuffer-on-off "M-x" 'smex))
-   ((eq M-x-cmd 'helm-M-x)
-    (fcitx-defun-minibuffer-on-off "M-x" 'helm-M-x))
-   (t
-    (error "I don't know your `M-x' binding command.
- Only support original M-x, `smex' and `helm-M-x'"))))
+(defvar fcitx--M-x-binding-command nil
+  "The command that `M-x' binds to")
+
+(fcitx-defun-minibuffer-on-off "original-M-x" 'read-extended-command)
+(fcitx-defun-minibuffer-on-off "smex-M-x" 'smex)
+(fcitx-defun-minibuffer-on-off "helm-M-x" 'helm-M-x)
+
+;;;###autoload
+(defun fcitx-M-x-turn-on ()
+  (interactive)
+  (setq fcitx--M-x-binding-command (key-binding (kbd "M-x")))
+  (let ((M-x-cmd fcitx--M-x-binding-command))
+    (cond
+     ((eq M-x-cmd 'execute-extended-command)
+      (fcitx-original-M-x-turn-on))
+     ((eq M-x-cmd 'smex)
+      (fcitx-smex-M-x-turn-on))
+     ((eq M-x-cmd 'helm-M-x)
+      (fcitx-helm-M-x-turn-on))
+     (t
+      (error "I don't know your `M-x' binding command.
+ Only support original M-x, `smex' and `helm-M-x'")))))
+
+;;;###autoload
+(defun fcitx-M-x-turn-off ()
+  (interactive)
+  (let ((M-x-cmd fcitx--M-x-binding-command))
+    (cond
+     ((eq M-x-cmd 'execute-extended-command)
+      (fcitx-original-M-x-turn-off))
+     ((eq M-x-cmd 'smex)
+      (fcitx-smex-M-x-turn-off))
+     ((eq M-x-cmd 'helm-M-x)
+      (fcitx-helm-M-x-turn-off))
+     (t
+      (error "I don't know your `M-x' binding command.
+ Only support original M-x, `smex' and `helm-M-x'")))))
 
 ;;;###autoload (autoload 'fcitx-shell-command-turn-on "fcitx" "Enable `shell-command' support" t)
 ;;;###autoload (autoload 'fcitx-shell-command-turn-off "fcitx" "Disable `shell-command' support" t)
