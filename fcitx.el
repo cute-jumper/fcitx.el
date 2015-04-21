@@ -122,6 +122,9 @@
 (defvar fcitx--prefix-keys-timer nil
   "Timer for prefix keys polling function.")
 
+(defvar fcitx--aggressive-p nil
+  "Whether we should disable fcitx at all minibuffer")
+
 (defun fcitx--check-status ()
   (unless (executable-find "fcitx-remote")
     (error "`fcitx-remote' is not avaiable. Please check your
@@ -175,7 +178,9 @@
       (fcitx--prefix-keys-maybe-deactivate))
      ((and (equal (this-command-keys-vector) [])
            (not (equal last-command 'switch-to-buffer))
-           (not (equal last-command 'other-window)))
+           (not (equal last-command 'other-window))
+           (or (not fcitx--aggressive-p)
+               (not (window-minibuffer-p))))
       (fcitx--prefix-keys-maybe-activate)))))
 
 ;;;###autoload
@@ -410,6 +415,29 @@
 ;;;###autoload (autoload 'fcitx-eval-expression-turn-on "fcitx" "Enable `shell-command' support" t)
 ;;;###autoload (autoload 'fcitx-eval-expression-turn-off "fcitx" "Disable `eval-expression' support" t)
 (fcitx-defun-minibuffer-on-off "eval-expression" 'read--expression)
+
+;; ------------------------------ ;;
+;; aggressive minibuffer strategy ;;
+;; ------------------------------ ;;
+(fcitx--defun-maybe "aggressive-minibuffer")
+
+;;;###autoload
+(defun fcitx-aggressive-minibuffer-turn-on ()
+  (interactive)
+  (setq fcitx--aggressive-p t)
+  (add-hook 'minibuffer-setup-hook
+          #'fcitx--aggressive-minibuffer-maybe-activate)
+  (add-hook 'minibuffer-inactive-mode-hook
+            #'fcitx--aggressive-minibuffer-maybe-deactivate))
+
+;;;###autoload
+(defun fcitx-aggressive-minibuffer-turn-off ()
+  (interactive)
+  (setq fcitx--aggressive-p)
+  (remove-hook 'minibuffer-setup-hook
+               #'fcitx--aggressive-minibuffer-maybe-activate)
+  (remove-hook 'minibuffer-inactive-mode-hook
+               #'fcitx--aggressive-minibuffer-maybe-deactivate))
 
 ;;;###autoload
 (defun fcitx-default-setup ()
