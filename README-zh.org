@@ -9,7 +9,12 @@
   
   推荐安装后使用下面的命令完成配置：
   : M-x fcitx-default-setup
+  
+  或者，你也可以使用更“激进”的设置：
+  : M-x fcitx-aggressive-setup
 
+  这两个设置的区别将在后面说明。
+  
   使用 =fcitx-default-setup= 会开启所有的功能，并且使用默认的配置。详见下文。
 
   对于每一个功能，都有对应的 =*-turn-on= 和 =*-turn-off= 命令用来开启或者关闭该
@@ -68,7 +73,18 @@
   注意： 如果你重新绑定 =M-x= 到 =smex= 或 =helm-M-x=, 那么你应该在你重新绑定键
   以后调用 =fcitx-default-setup= 或者 =fcitx-M-x-turn-on= 。
 
+* Aggressive setup
+  我个人来说，我并不需要在minibuffer中输入中文，所以我希望无论什么命令，都在
+  minibuffer中暂时禁用fcitx。如果你和我有一样的需求，那么你也可以选择这种设置。
 
+  和 =fcitx-default-setup= 一样， =fcitx-aggressive-setup= 会设置好prefix keys的
+  功能和Evil的支持， 然而它不会开启 =M-x=, =M-!=, =M-&= and =M-:= 支持。 它会调
+  用 =fcitx-aggressive-minibuffer-turn-on= 在所有用minibuffer作为输入的命令中禁
+  用fcitx，包括，但不局限于， =M-x=, =M-!=, =M-&= 和 =M-:= 。这也就是为什么这种
+  设置被叫做 "aggressive-setup"。 比如， 你用 "C-x b" 来切换buffer，或者用 "C-x
+  C-f" 来打开文件， 当你还处于minibuffer的时候，fcitx都会被禁用。 我个人（几乎）
+  不用中文的文件名和中文buffer名，所以我更倾向这种设置。
+  
 * TODO TODO
   - 更好的Evil支持
   - 可能会增加 =key-chord= 支持

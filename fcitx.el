@@ -34,6 +34,11 @@
 ;;   Recommended though optional:
 ;;   : M-x fcitx-default-setup
 
+;;   Alternatively, you can use a more aggressive setup:
+;;   : M-x fcitx-aggressive-setup
+
+;;   The differences between these two setups will be illustrated later.
+
 ;;   Calling =fcitx-default-setup= will enable all the features that this
 ;;   package provides and use default settings. See the following sections for
 ;;   details.
@@ -104,6 +109,22 @@
 
 ;;   Note: If you rebind =M-x= to =smex= or =helm-M-x=, then you should call
 ;;   =fcitx-default-setup= or =fcitx-M-x-turn-on= *after* the rebinding.
+
+;; * Aggressive setup
+;;   For me, I personally don't need to type Chinese in minibuffer, so I would like
+;;   to temporarily disable fcitx in minibuffer, no matter in what kind of command.
+;;   If you are the same as me, then you could choose this setup.
+
+;;   Basically, =fcitx-aggressive-setup= would setup prefix keys feature and Evil
+;;   support as =fcitx-default-setup= does, but it would not turn on =M-x=, =M-!=,
+;;   =M-&= and =M-:= support. Instead, it will call
+;;   =fcitx-aggressive-minibuffer-turn-on= to temporarily disable fcitx in all
+;;   commands that use minibuffer as a source of input, including, but not limited
+;;   to, =M-x=, =M-!=, =M-&= and =M-:=. That is why this is called
+;;   "aggressive-setup". For example, if you press "C-x b" to switch buffer, or
+;;   press "C-x C-f" to find file, fcitx will be disabled when you are in the
+;;   minibuffer. I prefer this setup because I don't use Chinese in my filename or
+;;   buffer name.
 
 ;; * TODO TODO
 ;;   - Better Evil support
@@ -179,8 +200,8 @@
      ((and (equal (this-command-keys-vector) [])
            (not (equal last-command 'switch-to-buffer))
            (not (equal last-command 'other-window))
-           (or (not fcitx--aggressive-p)
-               (not (window-minibuffer-p))))
+           (not (and fcitx--aggressive-p
+                     (window-minibuffer-p))))
       (fcitx--prefix-keys-maybe-activate)))))
 
 ;;;###autoload
@@ -419,25 +440,39 @@
 ;; ------------------------------ ;;
 ;; aggressive minibuffer strategy ;;
 ;; ------------------------------ ;;
-(fcitx--defun-maybe "aggressive-minibuffer")
+(defvar fcitx--aggressive-minibuffer-disabled-by-elisp nil)
+
+(defun fcitx--aggressive-minibuffer-maybe-deactivate ()
+  (if (fcitx--active-p)
+      (progn
+        (fcitx--deactivate)
+        (setq fcitx--aggressive-minibuffer-disabled-by-elisp t))
+    (when fcitx--prefix-keys-disabled-by-elisp
+      (setq fcitx--prefix-keys-disabled-by-elisp nil
+            fcitx--aggressive-minibuffer-disabled-by-elisp t))))
+
+(defun fcitx--aggressive-minibuffer-maybe-activate ()
+  (when fcitx--aggressive-minibuffer-disabled-by-elisp
+    (fcitx--activate)
+    (setq fcitx--aggressive-minibuffer-disabled-by-elisp)))
 
 ;;;###autoload
 (defun fcitx-aggressive-minibuffer-turn-on ()
   (interactive)
   (setq fcitx--aggressive-p t)
   (add-hook 'minibuffer-setup-hook
-          #'fcitx--aggressive-minibuffer-maybe-activate)
+            #'fcitx--aggressive-minibuffer-maybe-deactivate)
   (add-hook 'minibuffer-inactive-mode-hook
-            #'fcitx--aggressive-minibuffer-maybe-deactivate))
+            #'fcitx--aggressive-minibuffer-maybe-activate))
 
 ;;;###autoload
 (defun fcitx-aggressive-minibuffer-turn-off ()
   (interactive)
   (setq fcitx--aggressive-p)
   (remove-hook 'minibuffer-setup-hook
-               #'fcitx--aggressive-minibuffer-maybe-activate)
+               #'fcitx--aggressive-minibuffer-maybe-deactivate)
   (remove-hook 'minibuffer-inactive-mode-hook
-               #'fcitx--aggressive-minibuffer-maybe-deactivate))
+               #'fcitx--aggressive-minibuffer-maybe-activate))
 
 ;;;###autoload
 (defun fcitx-default-setup ()
@@ -453,6 +488,19 @@
   (fcitx-eval-expression-turn-on)
   ;; enable evil related
   (fcitx-evil-turn-on))
+
+;;;###autoload
+(defun fcitx-aggressive-setup ()
+  "Aggressive setup for `fcitx'"
+  (interactive)
+  (fcitx--check-status)
+  ;; enable prefix keys related
+  (fcitx-prefix-keys-setup)
+  (fcitx-prefix-keys-turn-on)
+  ;; enable evil related
+  (fcitx-evil-turn-on)
+  ;; disable fcitx in minibuffer
+  (fcitx-aggressive-minibuffer-turn-on))
 
 (provide 'fcitx)
 ;;; fcitx.el ends here
