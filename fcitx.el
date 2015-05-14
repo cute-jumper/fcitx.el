@@ -462,7 +462,7 @@
   (setq fcitx--aggressive-p t)
   (add-hook 'minibuffer-setup-hook
             #'fcitx--aggressive-minibuffer-maybe-deactivate)
-  (add-hook 'minibuffer-inactive-mode-hook
+  (add-hook 'minibuffer-exit-hook
             #'fcitx--aggressive-minibuffer-maybe-activate))
 
 ;;;###autoload
@@ -471,7 +471,7 @@
   (setq fcitx--aggressive-p)
   (remove-hook 'minibuffer-setup-hook
                #'fcitx--aggressive-minibuffer-maybe-deactivate)
-  (remove-hook 'minibuffer-inactive-mode-hook
+  (remove-hook 'minibuffer-exit-hook
                #'fcitx--aggressive-minibuffer-maybe-activate))
 
 ;;;###autoload
