@@ -190,7 +190,6 @@
 ;; ------------------- ;;
 (fcitx--defun-maybe "prefix-keys")
 
-
 (defun fcitx--prefix-keys-polling-function ()
   "Polling function executed every `fcitx-prefix-keys-polling-time'."
   (let ((key-seq (this-single-command-keys)))
@@ -198,8 +197,10 @@
      ((member key-seq fcitx--prefix-keys-sequence)
       (fcitx--prefix-keys-maybe-deactivate))
      ((and (equal (this-command-keys-vector) [])
-           (not (equal last-command 'switch-to-buffer))
-           (not (equal last-command 'other-window))
+           (not (and evil-mode
+                     (equal last-command 'switch-to-buffer)))
+           (not (and evil-mode
+                     (equal last-command 'other-window)))
            (not (and fcitx--aggressive-p
                      (window-minibuffer-p))))
       (fcitx--prefix-keys-maybe-activate)))))
