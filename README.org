@@ -1,5 +1,6 @@
 #+TITLE: fcitx.el
 [[http://melpa.org/#/fcitx][file:http://melpa.org/packages/fcitx-badge.svg]]
+[[http://stable.melpa.org/#/fcitx][file:http://stable.melpa.org/packages/fcitx-badge.svg]]
 
 Make [[https://github.com/fcitx/fcitx/][fcitx]] better in Emacs.
 
