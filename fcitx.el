@@ -135,6 +135,21 @@
 
 ;;; Code:
 
+;; To get rid of byte compilation warnings
+;; evil-related
+(defvar evil-mode)
+(declare-function evil-emacs-state-p "evil-states" (&optional state))
+(declare-function evil-insert-state-p "evil-states" (&optional state))
+;; fcitx-related
+(declare-function fcitx--original-M-x-turn-on "fcitx")
+(declare-function fcitx--smex-M-x-turn-on "fcitx")
+(declare-function fcitx--helm-M-x-turn-on "fcitx")
+(declare-function fcitx--original-M-x-turn-off "fcitx")
+(declare-function fcitx--smex-M-x-turn-off "fcitx")
+(declare-function fcitx--helm-M-x-turn-off "fcitx")
+(declare-function fcitx-shell-command-turn-on "fcitx")
+(declare-function fcitx-eval-expression-turn-on "fcitx")
+
 (defvar fcitx-prefix-keys-polling-time 0.1
   "Time interval to execute prefix keys polling function.")
 
@@ -250,67 +265,48 @@
            (evil-insert-state-p))))
 
 ;;FIX: cooperate with prefix keys and remove redundant code
-(if (fboundp 'advice-add)
-    (defun fcitx--evil-switch-buffer (orig-func &rest args)
-      ;; before switch
-      (when (and evil-mode
-                 (not (window-minibuffer-p)))
-        ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
-        (setq fcitx--evil-saved-active-p
-              (or (fcitx--active-p)
-                  fcitx--prefix-keys-disabled-by-elisp))
-        (setq fcitx--prefix-keys-disabled-by-elisp))
+(defun fcitx--evil-switch-buffer-before ()
+  (when (and evil-mode
+             (not (window-minibuffer-p)))
+    ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
+    (setq fcitx--evil-saved-active-p
+          (or (fcitx--active-p)
+              fcitx--prefix-keys-disabled-by-elisp))
+    (setq fcitx--prefix-keys-disabled-by-elisp)))
 
-      ;; switch buffer
-      (apply orig-func args)
-      ;; after switch
-      (when (and evil-mode
-                 (not (window-minibuffer-p)))
-        (cond
-         ((fcitx--evil-should-disable-fcitx-p)
-          (fcitx--deactivate))
-         (fcitx--evil-saved-active-p
-          (fcitx--activate)))
-        (setq fcitx--evil-saved-active-p)))
+(defun fcitx--evil-switch-buffer-after ()
+  (when (and evil-mode
+             (not (window-minibuffer-p)))
+    (cond
+     ((fcitx--evil-should-disable-fcitx-p)
+      (fcitx--deactivate))
+     (fcitx--evil-saved-active-p
+      (fcitx--activate)))
+    (setq fcitx--evil-saved-active-p)))
+
+(defun fcitx--evil-switch-buffer (orig-func &rest args)
+  ;; before switch
+  (fcitx--evil-switch-buffer-before)
+  ;; switch buffer
+  (apply orig-func args)
+  ;; after switch
+  (fcitx--evil-switch-buffer-after))
+
+(unless (fboundp 'advice-add)
   (defadvice switch-to-buffer (around fcitx--evil-switch-buffer-1)
-    (when (and evil-mode
-               (not (window-minibuffer-p)))
-      ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
-      (setq fcitx--evil-saved-active-p
-            (or (fcitx--active-p)
-                fcitx--prefix-keys-disabled-by-elisp))
-      (setq fcitx--prefix-keys-disabled-by-elisp))
-
+    ;; before switch
+    (fcitx--evil-switch-buffer-before)
     ;; switch buffer
     ad-do-it
     ;; after switch
-    (when (and evil-mode
-               (not (window-minibuffer-p)))
-      (cond
-       ((fcitx--evil-should-disable-fcitx-p)
-        (fcitx--deactivate))
-       (fcitx--evil-saved-active-p
-        (fcitx--activate)))
-      (setq fcitx--evil-saved-active-p)))
+    (fcitx--evil-switch-buffer-after))
   (defadvice other-window (around fcitx--evil-switch-buffer-2)
-    (when (and evil-mode
-               (not (window-minibuffer-p)))
-      ;; save state. Should we set `fcitx--prefix-keys-disabled-by-elisp' too?
-      (setq fcitx--evil-saved-active-p
-            (or (fcitx--active-p)
-                fcitx--prefix-keys-disabled-by-elisp))
-      (setq fcitx--prefix-keys-disabled-by-elisp))
+    ;; before switch
+    (fcitx--evil-switch-buffer-before)
     ;; switch buffer
     ad-do-it
     ;; after switch
-    (when (and evil-mode
-               (not (window-minibuffer-p)))
-      (cond
-       ((fcitx--evil-should-disable-fcitx-p)
-        (fcitx--deactivate))
-       (fcitx--evil-saved-active-p
-        (fcitx--activate)))
-      (setq fcitx--evil-saved-active-p))))
+    (fcitx--evil-switch-buffer-after)))
 
 ;;;###autoload
 (defun fcitx-evil-turn-on ()
@@ -493,7 +489,7 @@
 
 ;;;###autoload
 (defun fcitx-aggressive-setup ()
-  "Aggressive setup for `fcitx'"
+  "Aggressive setup for `fcitx'."
   (interactive)
   (fcitx--check-status)
   ;; enable prefix keys related
