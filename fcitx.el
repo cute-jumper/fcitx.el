@@ -213,9 +213,11 @@
      ((member key-seq fcitx--prefix-keys-sequence)
       (fcitx--prefix-keys-maybe-deactivate))
      ((and (equal (this-command-keys-vector) [])
-           (not (and evil-mode
+           (not (and (boundp 'evil-mode)
+                     evil-mode
                      (equal last-command 'switch-to-buffer)))
-           (not (and evil-mode
+           (not (and (boundp 'evil-mode)
+                     evil-mode
                      (equal last-command 'other-window)))
            (not (and fcitx--aggressive-p
                      (window-minibuffer-p))))
