@@ -160,7 +160,7 @@
   "Timer for prefix keys polling function.")
 
 (defvar fcitx--aggressive-p nil
-  "Whether we should disable fcitx at all minibuffer")
+  "Whether we should disable fcitx whenever we're in the minibuffer.")
 
 (defun fcitx--check-status ()
   (unless (executable-find "fcitx-remote")
@@ -206,6 +206,12 @@
 ;; ------------------- ;;
 (fcitx--defun-maybe "prefix-keys")
 
+(defsubst fcitx--evil-adviced-commands-p (command)
+  (and (boundp 'evil-mode)
+       evil-mode
+       (or (equal command 'switch-to-buffer)
+           (equal command 'other-window))))
+
 (defun fcitx--prefix-keys-polling-function ()
   "Polling function executed every `fcitx-prefix-keys-polling-time'."
   (let ((key-seq (this-single-command-keys)))
@@ -213,12 +219,7 @@
      ((member key-seq fcitx--prefix-keys-sequence)
       (fcitx--prefix-keys-maybe-deactivate))
      ((and (equal (this-command-keys-vector) [])
-           (not (and (boundp 'evil-mode)
-                     evil-mode
-                     (equal last-command 'switch-to-buffer)))
-           (not (and (boundp 'evil-mode)
-                     evil-mode
-                     (equal last-command 'other-window)))
+           (not (fcitx--evil-adviced-commands-p))
            (not (and fcitx--aggressive-p
                      (window-minibuffer-p))))
       (fcitx--prefix-keys-maybe-activate)))))
@@ -259,7 +260,7 @@
 (make-variable-buffer-local 'fcitx--evil-insert-disabled-by-elisp)
 
 (defvar fcitx--evil-saved-active-p nil
-  "Remember the fcitx state for each buffer")
+  "Remember the fcitx state for each buffer.")
 (make-variable-buffer-local 'fcitx--evil-saved-active-p)
 
 (defun fcitx--evil-should-disable-fcitx-p ()
