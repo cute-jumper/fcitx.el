@@ -282,7 +282,7 @@
      ((member key-seq fcitx--prefix-keys-sequence)
       (fcitx--prefix-keys-maybe-deactivate))
      ((and (equal (this-command-keys-vector) [])
-           (not (fcitx--evil-adviced-commands-p))
+           (not (fcitx--evil-adviced-commands-p last-command))
            (not (and fcitx--aggressive-p
                      (window-minibuffer-p))))
       (fcitx--prefix-keys-maybe-activate)))))
