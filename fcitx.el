@@ -237,8 +237,12 @@
   (call-process-shell-command "fcitx-remote -c"))
 
 (defun fcitx--active-p ()
-  (char-equal
-   (aref (shell-command-to-string "fcitx-remote") 0) ?2))
+  (let ((output (with-temp-buffer
+                  (call-process-shell-command "fcitx-remote" nil t)
+                  (buffer-string))))
+
+    (char-equal
+     (aref output 0) ?2)))
 
 (defmacro fcitx--defun-maybe (prefix)
   (let ((var-symbol (intern
