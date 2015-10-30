@@ -358,10 +358,9 @@
   ;; before switch
   (fcitx--evil-switch-buffer-before)
   ;; switch buffer
-  (let ((retval (apply orig-func args)))
+  (prog1 (apply orig-func args)
     ;; after switch
-    (fcitx--evil-switch-buffer-after)
-    retval))
+    (fcitx--evil-switch-buffer-after)))
 
 (unless (fboundp 'advice-add)
   (defadvice switch-to-buffer (around fcitx--evil-switch-buffer-1)
@@ -448,20 +447,22 @@
              (defun ,turn-off-func-name ()
                (interactive)
                (advice-remove ,command #'fcitx--minibuffer)))
-         (defadvice ,(cadr command) (around ,turn-on-func-name)
+         (defadvice ,(cadr command) (around fcitx--minibuffer-1)
            (fcitx--minibuffer-maybe-deactivate)
            (unwind-protect
                ad-do-it
              (fcitx--minibuffer-maybe-activate)))
          (defun ,turn-on-func-name ()
            (interactive)
+           (ad-enable-advice ,command 'around 'fcitx--minibuffer-1)
            (ad-activate ,command))
          (defun ,turn-off-func-name ()
            (interactive)
-           (ad-deactivate ,command))))))
+           (ad-disable-advice ,command 'around 'fcitx--minibuffer-1)
+           (ad-activate ,command))))))
 
 (defvar fcitx--M-x-binding-command nil
-  "The command that `M-x' binds to")
+  "The command that `M-x' is bound to.")
 
 (fcitx-defun-minibuffer-on-off "-original-M-x" 'read-extended-command)
 (fcitx-defun-minibuffer-on-off "-smex-M-x" 'smex)
