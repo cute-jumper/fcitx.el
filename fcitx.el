@@ -358,9 +358,10 @@
   ;; before switch
   (fcitx--evil-switch-buffer-before)
   ;; switch buffer
-  (apply orig-func args)
-  ;; after switch
-  (fcitx--evil-switch-buffer-after))
+  (let ((retval (apply orig-func args)))
+    ;; after switch
+    (fcitx--evil-switch-buffer-after)
+    retval))
 
 (unless (fboundp 'advice-add)
   (defadvice switch-to-buffer (around fcitx--evil-switch-buffer-1)
