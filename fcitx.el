@@ -231,14 +231,14 @@
  fcitx installtion.")))
 
 (defun fcitx--activate ()
-  (call-process-shell-command "fcitx-remote -o"))
+  (call-process "fcitx-remote" nil nil nil "-o"))
 
 (defun fcitx--deactivate ()
-  (call-process-shell-command "fcitx-remote -c"))
+  (call-process "fcitx-remote" nil nil nil "-c"))
 
 (defun fcitx--active-p ()
   (let ((output (with-temp-buffer
-                  (call-process-shell-command "fcitx-remote" nil t)
+                  (call-process "fcitx-remote" nil t)
                   (buffer-string))))
 
     (char-equal
