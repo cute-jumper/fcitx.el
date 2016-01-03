@@ -244,6 +244,28 @@
     (char-equal
      (aref output 0) ?2)))
 
+(defun fcitx--active-p-dbus ()
+  (= (dbus-call-method :session
+                       "org.fcitx.Fcitx"
+                       "/inputmethod"
+                       "org.fcitx.Fcitx.InputMethod"
+                       "GetCurrentState")
+     2))
+
+(defun fcitx--activate-dbus ()
+  (dbus-call-method :session
+                    "org.fcitx.Fcitx"
+                    "/inputmethod"
+                    "org.fcitx.Fcitx.InputMethod"
+                    "ActivateIM"))
+
+(defun fcitx--deactivate-dbus ()
+  (dbus-call-method :session
+                    "org.fcitx.Fcitx"
+                    "/inputmethod"
+                    "org.fcitx.Fcitx.InputMethod"
+                    "InactivateIM"))
+
 (defmacro fcitx--defun-maybe (prefix)
   (let ((var-symbol (intern
                      (concat "fcitx--"
