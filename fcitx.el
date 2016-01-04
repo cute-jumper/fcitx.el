@@ -198,6 +198,8 @@
 
 ;;; Code:
 
+(require 'dbus)
+
 ;; To get rid of byte compilation warnings
 ;; evil-related
 (defvar evil-mode)
@@ -215,6 +217,10 @@
 
 (defvar fcitx-prefix-keys-polling-time 0.1
   "Time interval to execute prefix keys polling function.")
+
+(defvar fcitx-use-dbus nil
+  "Whether we should use D-Bus version or not.
+Default value is nil.")
 
 (defvar fcitx--prefix-keys-sequence nil
   "Prefix keys that can trigger disabling fcitx.")
