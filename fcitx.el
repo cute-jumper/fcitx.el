@@ -236,27 +236,31 @@ Default value is nil.")
     (error "`fcitx-remote' is not avaiable. Please check your
  fcitx installtion.")))
 
-(defun fcitx--activate ()
+(defmacro fcitx--defun-dbus-or-proc (func-suffix)
+  (let ((func-name (intern (format "fcitx--%S" func-suffix)))
+        (dbus-fn (intern (format "fcitx--%S-dbus" func-suffix)))
+        (proc-fn (intern (format "fcitx--%S-proc" func-suffix))))
+    `(defun ,func-name ()
+       (if fcitx-use-dbus (,dbus-fn)
+         (,proc-fn)))))
+
+(fcitx--defun-dbus-or-proc activate)
+(fcitx--defun-dbus-or-proc deactivate)
+(fcitx--defun-dbus-or-proc active-p)
+
+(defun fcitx--activate-proc ()
   (call-process "fcitx-remote" nil nil nil "-o"))
 
-(defun fcitx--deactivate ()
+(defun fcitx--deactivate-proc ()
   (call-process "fcitx-remote" nil nil nil "-c"))
 
-(defun fcitx--active-p ()
+(defun fcitx--active-p-proc ()
   (let ((output (with-temp-buffer
                   (call-process "fcitx-remote" nil t)
                   (buffer-string))))
 
     (char-equal
      (aref output 0) ?2)))
-
-(defun fcitx--active-p-dbus ()
-  (= (dbus-call-method :session
-                       "org.fcitx.Fcitx"
-                       "/inputmethod"
-                       "org.fcitx.Fcitx.InputMethod"
-                       "GetCurrentState")
-     2))
 
 (defun fcitx--activate-dbus ()
   (dbus-call-method :session
@@ -271,6 +275,14 @@ Default value is nil.")
                     "/inputmethod"
                     "org.fcitx.Fcitx.InputMethod"
                     "InactivateIM"))
+
+(defun fcitx--active-p-dbus ()
+  (= (dbus-call-method :session
+                       "org.fcitx.Fcitx"
+                       "/inputmethod"
+                       "org.fcitx.Fcitx.InputMethod"
+                       "GetCurrentState")
+     2))
 
 (defmacro fcitx--defun-maybe (prefix)
   (let ((var-symbol (intern
