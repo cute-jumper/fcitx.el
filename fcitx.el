@@ -39,7 +39,8 @@
 ;; 3 Evil Support
 ;; 4 `M-x', `M-!', `M-&' and `M-:' Support
 ;; 5 Aggressive setup
-;; 6 TODO
+;; 6 D-Bus Version
+;; 7 TODO
 
 
 ;; Make [fcitx] better in Emacs.
@@ -188,7 +189,23 @@
 ;;   Chinese in my filename or buffer name.
 
 
-;; 6 TODO
+;; 6 D-Bus Version
+;; ===============
+
+;;   For Linux users, you can set `fcitx-use-dbus' to be `t' to speed up a
+;;   little:
+;;   ,----
+;;   | (setq fcitx-use-dbus t)
+;;   `----
+
+;;   For OSX users who use [fcitx-remote-for-osx], don't set this variable.
+
+
+;;   [fcitx-remote-for-osx]
+;;   https://github.com/CodeFalling/fcitx-remote-for-osx
+
+
+;; 7 TODO
 ;; ===========
 
 ;;   - Better Evil support

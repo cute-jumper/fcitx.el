@@ -85,6 +85,11 @@
   C-f" 来打开文件， 当你还处于minibuffer的时候，fcitx都会被禁用。 我个人（几乎）
   不用中文的文件名和中文buffer名，所以我更倾向这种设置。
   
+* D-Bus 版本
+  Linux用户可以设置 =fcitx-use-dbus= 变量为 =t=，可以稍稍提高运行效率：
+  : (setq fcitx-use-dbus t)
+
+  使用 [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]] 的OSX用户不要设置这个变量。
 * TODO TODO
   - 更好的Evil支持
 

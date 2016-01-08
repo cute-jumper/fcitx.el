@@ -107,6 +107,11 @@ This package provides a set of functions to make fcitx work better in Emacs.
   minibuffer. I prefer this setup because I don't use Chinese in my filename or
   buffer name.
   
+* D-Bus Version
+  For Linux users, you can set =fcitx-use-dbus= to be =t= to speed up a little:
+  : (setq fcitx-use-dbus t)
+
+  For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
 * TODO TODO
   - Better Evil support
 
