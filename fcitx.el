@@ -192,7 +192,6 @@
 ;; ===========
 
 ;;   - Better Evil support
-;;   - Add `key-chord' support
 
 ;;   For more features, pull requests are always welcome!
 

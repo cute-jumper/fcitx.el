@@ -87,6 +87,5 @@
   
 * TODO TODO
   - 更好的Evil支持
-  - 可能会增加 =key-chord= 支持
 
   如果有其他好的新的功能，欢迎提交pull request。

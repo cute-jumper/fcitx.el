@@ -109,6 +109,5 @@ This package provides a set of functions to make fcitx work better in Emacs.
   
 * TODO TODO
   - Better Evil support
-  - Add =key-chord= support
 
   For more features, pull requests are always welcome!
