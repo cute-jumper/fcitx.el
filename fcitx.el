@@ -349,10 +349,11 @@ Default value is nil.")
       (fcitx--prefix-keys-maybe-activate)))))
 
 ;;;###autoload
-(defun fcitx-prefix-keys-add (prefix-key)
+(defun fcitx-prefix-keys-add (&rest prefix-keys)
   (interactive)
-  (push (vconcat (read-kbd-macro prefix-key))
-        fcitx--prefix-keys-sequence))
+  (dolist (key prefix-keys)
+    (add-to-list 'fcitx--prefix-keys-sequence
+                 (vconcat (read-kbd-macro key)))))
 
 ;;;###autoload
 (defun fcitx-prefix-keys-turn-on ()
@@ -374,8 +375,7 @@ Default value is nil.")
 ;;;###autoload
 (defun fcitx-prefix-keys-setup ()
   (interactive)
-  (fcitx-prefix-keys-add "C-x")
-  (fcitx-prefix-keys-add "C-c"))
+  (fcitx-prefix-keys-add "C-x" "C-c"))
 
 ;; ------------ ;;
 ;; evil support ;;
