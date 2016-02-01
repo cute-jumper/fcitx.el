@@ -219,8 +219,6 @@
 ;; To get rid of byte compilation warnings
 ;; evil-related
 (defvar evil-mode)
-(declare-function evil-emacs-state-p "evil-states" (&optional state))
-(declare-function evil-insert-state-p "evil-states" (&optional state))
 ;; fcitx-related
 (declare-function fcitx--original-M-x-turn-on "fcitx")
 (declare-function fcitx--smex-M-x-turn-on "fcitx")
@@ -237,6 +235,9 @@
 (defvar fcitx-use-dbus nil
   "Whether we should use D-Bus version or not.
 Default value is nil.")
+
+(defvar fcitx-active-evil-states '(insert emacs)
+  "Fcitx should be activated in those evil states.")
 
 (defvar fcitx--prefix-keys-sequence nil
   "Prefix keys that can trigger disabling fcitx.")
@@ -387,8 +388,13 @@ Default value is nil.")
 (make-variable-buffer-local 'fcitx--evil-saved-active-p)
 
 (defun fcitx--evil-should-disable-fcitx-p ()
-  (not (or (evil-emacs-state-p)
-           (evil-insert-state-p))))
+  (let (active-state-p)
+    (dolist (state fcitx-active-evil-states)
+      (let ((state-p-func (intern (format "evil-%s-state-p" state))))
+        (and (fboundp state-p-func)
+             (funcall state-p-func)
+             (setq active-state-p t))))
+    (not active-state-p)))
 
 ;;FIX: cooperate with prefix keys and remove redundant code
 (defun fcitx--evil-switch-buffer-before ()
@@ -434,15 +440,31 @@ Default value is nil.")
     ;; after switch
     (fcitx--evil-switch-buffer-after)))
 
+(defun fcitx--active-evil-states-exit ()
+  (unless (member evil-next-state fcitx-active-evil-states)
+    (fcitx--evil-insert-maybe-deactivate)))
+
+(defun fcitx--active-evil-states-entry ()
+  (unless (member evil-previous-state fcitx-active-evil-states)
+    (fcitx--evil-insert-maybe-activate)))
+
+(defun fcitx--evil-modify-hooks (add-p)
+  (dolist (state fcitx-active-evil-states)
+    (let ((exit-hook (intern (format "evil-%s-state-exit-hook" state)))
+          (entry-hook (intern (format "evil-%s-state-entry-hook" state))))
+      (when (and (boundp exit-hook)
+                 (boundp entry-hook))
+        (funcall (if add-p #'add-hook #'remove-hook) exit-hook
+                 #'fcitx--active-evil-states-exit)
+        (funcall (if add-p #'add-hook #'remove-hook) entry-hook
+                 #'fcitx--active-evil-states-entry)))))
+
 ;;;###autoload
 (defun fcitx-evil-turn-on ()
   (interactive)
   (eval-after-load "evil"
     '(progn
-       (add-hook 'evil-insert-state-exit-hook
-                 #'fcitx--evil-insert-maybe-deactivate)
-       (add-hook 'evil-insert-state-entry-hook
-                 #'fcitx--evil-insert-maybe-activate)
+       (fcitx--evil-modify-hooks t)
        (if (fboundp 'advice-add)
            (progn
              (advice-add 'switch-to-buffer :around
@@ -459,10 +481,7 @@ Default value is nil.")
   (interactive)
   (eval-after-load "evil"
     '(progn
-       (remove-hook 'evil-insert-state-exit-hook
-                    #'fcitx--evil-insert-maybe-deactivate)
-       (remove-hook 'evil-insert-state-entry-hook
-                    #'fcitx--evil-insert-maybe-activate)
+       (fcitx--evil-modify-hooks nil)
        (if (fboundp 'advice-add)
            (progn
              (advice-remove 'switch-to-buffer
