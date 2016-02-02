@@ -600,6 +600,7 @@ Default value is nil.")
 (fcitx-defun-minibuffer-on-off "read-key" 'read-key)
 (fcitx-defun-minibuffer-on-off "read-key-sequence" 'read-key-sequence)
 (fcitx-defun-minibuffer-on-off "read-key-sequence-vector" 'read-key-sequence-vector)
+
 ;;;###autoload
 (defun fcitx-read-funcs-turn-on ()
   (interactive)
@@ -652,6 +653,23 @@ Default value is nil.")
                #'fcitx--aggressive-minibuffer-maybe-deactivate)
   (remove-hook 'minibuffer-exit-hook
                #'fcitx--aggressive-minibuffer-maybe-activate))
+
+;; ------- ;;
+;; isearch ;;
+;; ------- ;;
+(fcitx--defun-maybe "isearch")
+
+;;;###autoload
+(defun fcitx-isearch-turn-on ()
+  (interactive)
+  (add-hook 'isearch-mode-hook #'fcitx--isearch-maybe-deactivate)
+  (add-hook 'isearch-mode-end-hook #'fcitx--isearch-maybe-activate))
+
+;;;###autoload
+(defun fcitx-isearch-turn-off ()
+  (interactive)
+  (remove-hook 'isearch-mode-hook #'fcitx--isearch-maybe-deactivate)
+  (remove-hook 'isearch-mode-end-hook #'fcitx--isearch-maybe-activate))
 
 ;;;###autoload
 (defun fcitx-default-setup ()
