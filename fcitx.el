@@ -230,7 +230,15 @@
   (declare-function fcitx--smex-M-x-turn-off "fcitx")
   (declare-function fcitx--helm-M-x-turn-off "fcitx")
   (declare-function fcitx-shell-command-turn-on "fcitx")
-  (declare-function fcitx-eval-expression-turn-on "fcitx"))
+  (declare-function fcitx-eval-expression-turn-on "fcitx")
+  (declare-function fcitx-read-char-turn-on "fcitx")
+  (declare-function fcitx-read-char-turn-off "fcitx")
+  (declare-function fcitx-read-key-turn-on "fcitx")
+  (declare-function fcitx-read-key-turn-off "fcitx")
+  (declare-function fcitx-read-key-sequence-turn-on "fcitx")
+  (declare-function fcitx-read-key-sequence-turn-off "fcitx")
+  (declare-function fcitx-read-key-sequence-vector-turn-on "fcitx")
+  (declare-function fcitx-read-key-sequence-vector-turn-off "fcitx"))
 
 (defvar fcitx-prefix-keys-polling-time 0.1
   "Time interval to execute prefix keys polling function.")
@@ -585,6 +593,29 @@ Default value is nil.")
 ;;;###autoload (autoload 'fcitx-eval-expression-turn-off "fcitx" "Disable `eval-expression' support" t)
 (fcitx-defun-minibuffer-on-off "eval-expression" 'read--expression)
 
+;; ---------------- ;;
+;; `read-*' support ;;
+;; ---------------- ;;
+(fcitx-defun-minibuffer-on-off "read-char" 'read-char)
+(fcitx-defun-minibuffer-on-off "read-key" 'read-key)
+(fcitx-defun-minibuffer-on-off "read-key-sequence" 'read-key-sequence)
+(fcitx-defun-minibuffer-on-off "read-key-sequence-vector" 'read-key-sequence-vector)
+;;;###autoload
+(defun fcitx-read-funcs-turn-on ()
+  (interactive)
+  (fcitx-read-char-turn-on)
+  (fcitx-read-key-turn-on)
+  (fcitx-read-key-sequence-turn-on)
+  (fcitx-read-key-sequence-vector-turn-on))
+
+;;;###autoload
+(defun fcitx-read-funcs-turn-off ()
+  (interactive)
+  (fcitx-read-char-turn-off)
+  (fcitx-read-key-turn-off)
+  (fcitx-read-key-sequence-turn-off)
+  (fcitx-read-key-sequence-vector-turn-off))
+
 ;; ------------------------------ ;;
 ;; aggressive minibuffer strategy ;;
 ;; ------------------------------ ;;
@@ -627,14 +658,16 @@ Default value is nil.")
   "Default setup for `fcitx'."
   (interactive)
   (fcitx--check-status)
-  ;; enable prefix keys related
+  ;; enable prefix-keys feature
   (fcitx-prefix-keys-setup)
   (fcitx-prefix-keys-turn-on)
-  ;; enable minibuffer related
+  ;; enable minibuffer-related features
   (fcitx-M-x-turn-on)
   (fcitx-shell-command-turn-on)
   (fcitx-eval-expression-turn-on)
-  ;; enable evil related
+  ;; enable read-* functions support
+  (fcitx-read-funcs-turn-on)
+  ;; enable evil-related features
   (fcitx-evil-turn-on))
 
 ;;;###autoload
@@ -642,10 +675,12 @@ Default value is nil.")
   "Aggressive setup for `fcitx'."
   (interactive)
   (fcitx--check-status)
-  ;; enable prefix keys related
+  ;; enable prefix-keys feature
   (fcitx-prefix-keys-setup)
   (fcitx-prefix-keys-turn-on)
-  ;; enable evil related
+  ;; enable read-* functions support
+  (fcitx-read-funcs-turn-on)
+  ;; enable evil-related features
   (fcitx-evil-turn-on)
   ;; disable fcitx in minibuffer
   (fcitx-aggressive-minibuffer-turn-on))
