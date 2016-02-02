@@ -217,17 +217,20 @@
 (require 'dbus)
 
 ;; To get rid of byte compilation warnings
-;; evil-related
-(defvar evil-mode)
-;; fcitx-related
-(declare-function fcitx--original-M-x-turn-on "fcitx")
-(declare-function fcitx--smex-M-x-turn-on "fcitx")
-(declare-function fcitx--helm-M-x-turn-on "fcitx")
-(declare-function fcitx--original-M-x-turn-off "fcitx")
-(declare-function fcitx--smex-M-x-turn-off "fcitx")
-(declare-function fcitx--helm-M-x-turn-off "fcitx")
-(declare-function fcitx-shell-command-turn-on "fcitx")
-(declare-function fcitx-eval-expression-turn-on "fcitx")
+(eval-when-compile
+  ;; evil-related
+  (defvar evil-mode)
+  (defvar evil-previous-state)
+  (defvar evil-next-state)
+  ;; fcitx-related
+  (declare-function fcitx--original-M-x-turn-on "fcitx")
+  (declare-function fcitx--smex-M-x-turn-on "fcitx")
+  (declare-function fcitx--helm-M-x-turn-on "fcitx")
+  (declare-function fcitx--original-M-x-turn-off "fcitx")
+  (declare-function fcitx--smex-M-x-turn-off "fcitx")
+  (declare-function fcitx--helm-M-x-turn-off "fcitx")
+  (declare-function fcitx-shell-command-turn-on "fcitx")
+  (declare-function fcitx-eval-expression-turn-on "fcitx"))
 
 (defvar fcitx-prefix-keys-polling-time 0.1
   "Time interval to execute prefix keys polling function.")
