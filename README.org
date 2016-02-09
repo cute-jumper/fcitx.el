@@ -107,6 +107,14 @@ This package provides a set of functions to make fcitx work better in Emacs.
   minibuffer. I prefer this setup because I don't use Chinese in my filename or
   buffer name.
   
+* Extra Functions
+** I-search support
+   Usually when you use fcitx, you also want to I-search in Chinese, so this
+   feature is not enabled by eith =fcitx-default-setup= or
+   =fcitx-aggressive-setup=. If you do want to disable fcitx when using
+   I-search, enable this feature explicitly by
+   : (fcitx-isearch-turn-on)
+
 * D-Bus Version
   For Linux users, you can set =fcitx-use-dbus= to be =t= to speed up a little:
   : (setq fcitx-use-dbus t)
