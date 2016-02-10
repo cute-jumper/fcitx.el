@@ -62,7 +62,13 @@ This package provides a set of functions to make fcitx work better in Emacs.
   entering "insert mode" if originally you enable it in "insert mode":
   : (fcitx-evil-turn-on)
 
-  It currently should work well for "entering" and "exiting" the insert state.
+  The evil states in which fcitx should be enabled are defined in the variable
+  =fcitx-active-evil-states=. The default value is =(insert emacs)=, which means
+  it will enable fcitx if necessary when entering =evil-insert-state= or
+  =evil-emacs-state=. For Spacemacs users who use its hybrid mode, you may also
+  want to add hybrid mode to the list:
+  : (setq fcitx-active-evil-states '(insert emacs hybrid))
+
   It will also disable fcitx if you use =switch-to-buffer= or =other-window= to
   switch to a buffer which is not in insert state or Emacs state. For example,
   if you're currently in insert mode in buffer =A= and you've enabled fcitx,
@@ -70,7 +76,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
   currently, say, in normal mode, then fcitx will be disabled in buffer =B=.
 
   Note that currently the Evil support is not perfect. If you come across any
-  bugs, consider file an issue or creating a pull request.
+  bugs, consider filing an issue or creating a pull request.
 
   Similarly, =M-x fcitx-default-setup= enables this feature.
 
