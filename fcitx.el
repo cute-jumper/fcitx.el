@@ -260,9 +260,16 @@ Default value is nil.")
   "Whether we should disable fcitx whenever we're in the minibuffer.")
 
 (defun fcitx--check-status ()
-  (unless (executable-find "fcitx-remote")
-    (error "`fcitx-remote' is not avaiable. Please check your
- fcitx installtion.")))
+  (not
+   (if (executable-find "fcitx-remote")
+       (let ((output (with-temp-buffer
+                       (call-process "fcitx-remote" nil t)
+                       (buffer-string))))
+         (and (char-equal (aref output 0) ?N)
+              (display-warning "fcitx.el" "`fcitx' is not running. \
+Re-run the setup function after `fcitx' is started.")))
+     (display-warning "fcitx.el" "`fcitx-remote' is not avaiable. Please check your\
+ fcitx installtion."))))
 
 (defmacro fcitx--defun-dbus-or-proc (func-suffix)
   (let ((func-name (intern (format "fcitx--%S" func-suffix)))
@@ -675,33 +682,33 @@ Default value is nil.")
 (defun fcitx-default-setup ()
   "Default setup for `fcitx'."
   (interactive)
-  (fcitx--check-status)
-  ;; enable prefix-keys feature
-  (fcitx-prefix-keys-setup)
-  (fcitx-prefix-keys-turn-on)
-  ;; enable minibuffer-related features
-  (fcitx-M-x-turn-on)
-  (fcitx-shell-command-turn-on)
-  (fcitx-eval-expression-turn-on)
-  ;; enable read-* functions support
-  (fcitx-read-funcs-turn-on)
-  ;; enable evil-related features
-  (fcitx-evil-turn-on))
+  (when (fcitx--check-status)
+    ;; enable prefix-keys feature
+    (fcitx-prefix-keys-setup)
+    (fcitx-prefix-keys-turn-on)
+    ;; enable minibuffer-related features
+    (fcitx-M-x-turn-on)
+    (fcitx-shell-command-turn-on)
+    (fcitx-eval-expression-turn-on)
+    ;; enable read-* functions support
+    (fcitx-read-funcs-turn-on)
+    ;; enable evil-related features
+    (fcitx-evil-turn-on)))
 
 ;;;###autoload
 (defun fcitx-aggressive-setup ()
   "Aggressive setup for `fcitx'."
   (interactive)
-  (fcitx--check-status)
-  ;; enable prefix-keys feature
-  (fcitx-prefix-keys-setup)
-  (fcitx-prefix-keys-turn-on)
-  ;; enable read-* functions support
-  (fcitx-read-funcs-turn-on)
-  ;; enable evil-related features
-  (fcitx-evil-turn-on)
-  ;; disable fcitx in minibuffer
-  (fcitx-aggressive-minibuffer-turn-on))
+  (when (fcitx--check-status)
+    ;; enable prefix-keys feature
+    (fcitx-prefix-keys-setup)
+    (fcitx-prefix-keys-turn-on)
+    ;; enable read-* functions support
+    (fcitx-read-funcs-turn-on)
+    ;; enable evil-related features
+    (fcitx-evil-turn-on)
+    ;; disable fcitx in minibuffer
+    (fcitx-aggressive-minibuffer-turn-on)))
 
 (provide 'fcitx)
 ;;; fcitx.el ends here
