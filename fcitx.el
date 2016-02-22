@@ -690,8 +690,8 @@ Re-run the setup function after `fcitx' is started.")))
     (fcitx-M-x-turn-on)
     (fcitx-shell-command-turn-on)
     (fcitx-eval-expression-turn-on)
-    ;; enable read-* functions support
-    (fcitx-read-funcs-turn-on)
+    ;; don't enable read-* functions support. See #14
+    ;; (fcitx-read-funcs-turn-on)
     ;; enable evil-related features
     (fcitx-evil-turn-on)))
 
@@ -703,8 +703,8 @@ Re-run the setup function after `fcitx' is started.")))
     ;; enable prefix-keys feature
     (fcitx-prefix-keys-setup)
     (fcitx-prefix-keys-turn-on)
-    ;; enable read-* functions support
-    (fcitx-read-funcs-turn-on)
+    ;; don't enable read-* functions support. See #14
+    ;; (fcitx-read-funcs-turn-on)
     ;; enable evil-related features
     (fcitx-evil-turn-on)
     ;; disable fcitx in minibuffer
