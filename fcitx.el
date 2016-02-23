@@ -39,17 +39,24 @@
 ;; 3 Evil Support
 ;; 4 `M-x', `M-!', `M-&' and `M-:' Support
 ;; 5 Aggressive setup
-;; 6 D-Bus Version
-;; 7 TODO
+;; 6 Extra Functions
+;; .. 6.1 I-search Support
+;; .. 6.2 Character & Key Input Support
+;; 7 D-Bus Version
+;; 8 TODO TODO
 
 
 ;; Make [fcitx] better in Emacs.
+
+;; [中文版]
 
 ;; This package provides a set of functions to make fcitx work better in
 ;; Emacs.
 
 
 ;; [fcitx] https://github.com/fcitx/fcitx/
+
+;; [中文版] ./README-zh.org
 
 
 ;; 1 Setup
@@ -132,8 +139,16 @@
 ;;   | (fcitx-evil-turn-on)
 ;;   `----
 
-;;   It currently should work well for "entering" and "exiting" the insert
-;;   state. It will also disable fcitx if you use `switch-to-buffer' or
+;;   The evil states in which fcitx should be enabled are defined in the
+;;   variable `fcitx-active-evil-states'. The default value is `(insert
+;;   emacs)', which means it will enable fcitx if necessary when entering
+;;   `evil-insert-state' or `evil-emacs-state'. For Spacemacs users who use
+;;   its hybrid mode, you may also want to add hybrid mode to the list:
+;;   ,----
+;;   | (setq fcitx-active-evil-states '(insert emacs hybrid))
+;;   `----
+
+;;   It will also disable fcitx if you use `switch-to-buffer' or
 ;;   `other-window' to switch to a buffer which is not in insert state or
 ;;   Emacs state. For example, if you're currently in insert mode in buffer
 ;;   `A' and you've enabled fcitx, then you call `switch-to-buffer' to
@@ -141,7 +156,7 @@
 ;;   then fcitx will be disabled in buffer `B'.
 
 ;;   Note that currently the Evil support is not perfect. If you come
-;;   across any bugs, consider file an issue or creating a pull request.
+;;   across any bugs, consider filing an issue or creating a pull request.
 
 ;;   Similarly, `M-x fcitx-default-setup' enables this feature.
 
@@ -189,7 +204,59 @@
 ;;   Chinese in my filename or buffer name.
 
 
-;; 6 D-Bus Version
+;; 6 Extra Functions
+;; =================
+
+;;   These functions are not enabled in either `fcitx-default-setup' or
+;;   `fcitx-aggressive-setup'. You need to enable them manually if you want
+;;   to use them.
+
+
+;; 6.1 I-search Support
+;; ~~~~~~~~~~~~~~~~~~~~
+
+;;   Usually when you use fcitx, you also want to I-search in Chinese, so
+;;   this feature is not enabled by eith `fcitx-default-setup' or
+;;   `fcitx-aggressive-setup'. If you do want to disable fcitx when using
+;;   I-search, enable this feature explicitly by
+;;   ,----
+;;   | (fcitx-isearch-turn-on)
+;;   `----
+
+
+;; 6.2 Character & Key Input Support
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;;   If you're using `ace-pinyin', you need to input a letter after calling
+;;   `ace-pinyin'. `fcitx' can be automatically disabled by turning on the
+;;   following feature:
+;;   ,----
+;;   | (fcitx-read-funcs-turn-on)
+;;   `----
+
+;;   However, the current implementation of this feature has some problems.
+;;   See [issue #12] and [issue #14].
+
+;;   So when to enable this feature?
+;;   1. If you're on *Linux* and set `fcitx-use-dbus' to be `t', it is
+;;      totally fine if you enable this feature. Although this feature of
+;;      `fcitx.el' will not work as expected in all cases(see [issue #12]),
+;;      it does *no harm* for you to enable this.
+;;   2. If you're on OS X and use Evil, the problem described in [issue
+;;      #14] may happen. You can stiil enable this feature, using the
+;;      following code:
+;;      ,----
+;;      | (fcitx-read-funcs-turn-on)
+;;      | (fcitx-read-key-sequence-turn-off)
+;;      `----
+
+
+;;   [issue #12] https://github.com/cute-jumper/fcitx.el/issues/12
+
+;;   [issue #14] https://github.com/cute-jumper/fcitx.el/issues/14
+
+
+;; 7 D-Bus Version
 ;; ===============
 
 ;;   For Linux users, you can set `fcitx-use-dbus' to be `t' to speed up a
@@ -205,7 +272,7 @@
 ;;   https://github.com/CodeFalling/fcitx-remote-for-osx
 
 
-;; 7 TODO
+;; 8 TODO TODO
 ;; ===========
 
 ;;   - Better Evil support

@@ -114,12 +114,34 @@ This package provides a set of functions to make fcitx work better in Emacs.
   buffer name.
   
 * Extra Functions
-** I-search support
+These functions are not enabled in either =fcitx-default-setup= or
+=fcitx-aggressive-setup=. You need to enable them manually if you want to use
+them.
+** I-search Support
    Usually when you use fcitx, you also want to I-search in Chinese, so this
    feature is not enabled by eith =fcitx-default-setup= or
    =fcitx-aggressive-setup=. If you do want to disable fcitx when using
    I-search, enable this feature explicitly by
    : (fcitx-isearch-turn-on)
+
+** Character & Key Input Support
+   If you're using =ace-pinyin=, you need to input a letter after calling
+   =ace-pinyin=. =fcitx= can be automatically disabled by turning on the
+   following feature:
+   : (fcitx-read-funcs-turn-on)
+
+   However, the current implementation of this feature has some problems. See
+   [[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]] and [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]].
+
+   So when to enable this feature?
+   1. If you're on *Linux* and set =fcitx-use-dbus= to be =t=, it is totally
+      fine if you enable this feature. Although this feature of =fcitx.el= will
+      not work as expected in all cases(see [[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]]), it does *no harm* for
+      you to enable this.
+   2. If you're on OS X and use Evil, the problem described in [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]] may
+      happen. You can stiil enable this feature, using the following code:
+      : (fcitx-read-funcs-turn-on)
+      : (fcitx-read-key-sequence-turn-off)
 
 * D-Bus Version
   For Linux users, you can set =fcitx-use-dbus= to be =t= to speed up a little:
