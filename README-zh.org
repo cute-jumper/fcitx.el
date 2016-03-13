@@ -6,15 +6,15 @@
 * 安装
   : (add-to-list 'load-path "/path/to/fcitx.el")
   : (require 'fcitx)
-  
+
   推荐安装后使用下面的命令完成配置：
   : M-x fcitx-default-setup
-  
+
   或者，你也可以使用更“激进”的设置：
   : M-x fcitx-aggressive-setup
 
   这两个设置的区别将在后面说明。
-  
+
   使用 =fcitx-default-setup= 会开启所有的功能，并且使用默认的配置。详见下文。
 
   对于每一个功能，都有对应的 =*-turn-on= 和 =*-turn-off= 命令用来开启或者关闭该
@@ -55,7 +55,7 @@
   前处于normal mode, 那么在buffer =B= fcitx也会被禁用。
 
   当前对Evil的支持还不算完善。如果遇见任何问题，欢迎提交issue或者pull request。
-  
+
   如果使用了上面的 =M-x fcitx-default-setup= ，这个功能也会自动被启用
 * =M-x=, =M-!=, =M-&=, =M-:= 支持
   如果通常你在使用 =M-x=, =M-!= (=shell-command=), =M-&= (=async-shell-command=)
@@ -84,12 +84,39 @@
   设置被叫做 "aggressive-setup"。 比如， 你用 "C-x b" 来切换buffer，或者用 "C-x
   C-f" 来打开文件， 当你还处于minibuffer的时候，fcitx都会被禁用。 我个人（几乎）
   不用中文的文件名和中文buffer名，所以我更倾向这种设置。
-  
+
+* 额外的一些功能
+  这些功能在 =fcitx-default-setup= 和 =fcitx-aggressive-setup= 中都没有开启。如果
+  需要以下的这些功能，你需要手动开启。
+** I-search 支持
+   大部分情况下当你使用 fcitx 的时候，你也会在 I-search 中使用中文进行搜索，所以
+   默认情况下这个功能没有开启。 当这个功能开启后，=fcitx= 将在 I-search 的时候被
+   禁用。 通过以下设置开启这个功能：
+   : (fcitx-isearch-turn-on)
+
+** 字符和按键输入的支持
+   如果你使用 =ace-pinyin=，在你使用 =ace-pinyin= 跳转的时候，你需要输入一个英文
+   字符作为拼音的首字母。 使用以下设置，使得在 Emacs 提示你输入英文字母的时候，
+   =fcitx= 可以自动关闭：
+   : (fcitx-read-funcs-turn-on)
+
+   但是，目前的实现方法有一些问题。参见 [[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]] 和 [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]].
+
+   那么什么时候开启这个功能呢？
+   1. 如果你使用 *Linux* 且 =fcitx-use-dbus= 设置为了 =t=，你可以开启这个功能，
+      尽管某些情况下不一定像你所期望的那样工作（见[[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]]），但对于正常使用没
+      有影响。
+   2. 如果你使用 OSX 且使用 Evil 的话, [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]] 中的情况可能会发生。你仍然可以
+      使用以下的设置来开启这个功能：
+      : (fcitx-read-funcs-turn-on)
+      : (fcitx-read-key-sequence-turn-off)
+
 * D-Bus 版本
-  Linux用户可以设置 =fcitx-use-dbus= 变量为 =t=，可以稍稍提高运行效率：
+  Linux用户可以设置 =fcitx-use-dbus= 变量为 =t= ，可以稍稍提高运行效率：
   : (setq fcitx-use-dbus t)
 
   使用 [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]] 的OSX用户不要设置这个变量。
+
 * TODO TODO
   - 更好的Evil支持
 
