@@ -90,7 +90,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
   to disable fcitx temporarily in these commands.
 
   =M-x= should work with the original =M-x= (=execute-extended-command=), =smex=
-  and =helm-M-x=.
+  , =helm-M-x= and =counsel-M-x=.
 
   Again, =M-x fcitx-default-setup= enables all these three features.
 

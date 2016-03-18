@@ -65,8 +65,8 @@
   : (fcitx-eval-expression-turn-on)
   来在使用这些命令的时候暂时禁用fcitx。
 
-  无论 =M-x= 是原始的 =M-x= 命令(=execute-extended-command=), 或是 =smex= 和
-  =helm-M-x= ，都应该都可以正常工作。
+  无论 =M-x= 是原始的 =M-x= 命令(=execute-extended-command=), 或是 =smex=,
+  =helm-M-x= 和 =counsel-M-x= ，都应该都可以正常工作。
 
   使用上面的 =M-x fcitx-default-setup= 将默认开始这些功能。
 

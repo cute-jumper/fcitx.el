@@ -175,12 +175,12 @@
 ;;   to disable fcitx temporarily in these commands.
 
 ;;   `M-x' should work with the original `M-x'
-;;   (`execute-extended-command'), `smex' and `helm-M-x'.
+;;   (`execute-extended-command'), `smex', `helm-M-x' and `counsel-M-x'.
 
 ;;   Again, `M-x fcitx-default-setup' enables all these three features.
 
-;;   Note: If you rebind `M-x' to `smex' or `helm-M-x', then you should
-;;   call `fcitx-default-setup' or `fcitx-M-x-turn-on' *after* the
+;;   Note: If you rebind `M-x' to `smex', `helm-M-x' or `counsel-M-x', then
+;;   you should call `fcitx-default-setup' or `fcitx-M-x-turn-on' *after* the
 ;;   rebinding.
 
 
@@ -293,9 +293,11 @@
   (declare-function fcitx--original-M-x-turn-on "fcitx")
   (declare-function fcitx--smex-M-x-turn-on "fcitx")
   (declare-function fcitx--helm-M-x-turn-on "fcitx")
+  (declare-function fcitx--counsel-M-x-turn-on "fcitx")
   (declare-function fcitx--original-M-x-turn-off "fcitx")
   (declare-function fcitx--smex-M-x-turn-off "fcitx")
   (declare-function fcitx--helm-M-x-turn-off "fcitx")
+  (declare-function fcitx--counsel-M-x-turn-off "fcitx")
   (declare-function fcitx-shell-command-turn-on "fcitx")
   (declare-function fcitx-eval-expression-turn-on "fcitx")
   (declare-function fcitx-read-char-turn-on "fcitx")
@@ -644,8 +646,8 @@ Re-run the setup function after `fcitx' is started.")))
      ((eq M-x-cmd 'counsel-M-x)
       (fcitx--counsel-M-x-turn-on))
      (t
-      (error "I don't know your `M-x' binding command.
- Only support original M-x, `smex' and `helm-M-x'")))))
+      (error "Unknown `M-x' binding command.\
+ Only original M-x, `smex', `helm-M-x' and `counsel-M-x' are supported.")))))
 
 ;;;###autoload
 (defun fcitx-M-x-turn-off ()
@@ -658,9 +660,11 @@ Re-run the setup function after `fcitx' is started.")))
       (fcitx--smex-M-x-turn-off))
      ((eq M-x-cmd 'helm-M-x)
       (fcitx--helm-M-x-turn-off))
+     ((eq M-x-cmd 'counsel-M-x)
+      (fcitx--counsel-M-x-turn-off))
      (t
-      (error "I don't know your `M-x' binding command.
- Only support original M-x, `smex' and `helm-M-x'")))))
+      (error "Unknown `M-x' binding command.\
+ Only original M-x, `smex', `helm-M-x' and `counsel-M-x' are supported.")))))
 
 ;;;###autoload (autoload 'fcitx-shell-command-turn-on "fcitx" "Enable `shell-command' support" t)
 ;;;###autoload (autoload 'fcitx-shell-command-turn-off "fcitx" "Disable `shell-command' support" t)
