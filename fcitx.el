@@ -627,6 +627,7 @@ Re-run the setup function after `fcitx' is started.")))
 (fcitx-defun-minibuffer-on-off "-original-M-x" 'read-extended-command)
 (fcitx-defun-minibuffer-on-off "-smex-M-x" 'smex)
 (fcitx-defun-minibuffer-on-off "-helm-M-x" 'helm-M-x-read-extended-command)
+(fcitx-defun-minibuffer-on-off "-counsel-M-x" 'read-from-minibuffer)
 
 ;;;###autoload
 (defun fcitx-M-x-turn-on ()
@@ -640,6 +641,8 @@ Re-run the setup function after `fcitx' is started.")))
       (fcitx--smex-M-x-turn-on))
      ((eq M-x-cmd 'helm-M-x)
       (fcitx--helm-M-x-turn-on))
+     ((eq M-x-cmd 'counsel-M-x)
+      (fcitx--counsel-M-x-turn-on))
      (t
       (error "I don't know your `M-x' binding command.
  Only support original M-x, `smex' and `helm-M-x'")))))
