@@ -331,9 +331,11 @@ Default value is nil.")
 (defun fcitx--check-status ()
   (not
    (if (executable-find "fcitx-remote")
-       (let ((output (with-temp-buffer
-                       (call-process "fcitx-remote" nil t)
-                       (buffer-string))))
+       (let ((output
+              (let (deactivate-mark)
+                (with-temp-buffer
+                  (call-process "fcitx-remote" nil t)
+                  (buffer-string)))))
          (and (char-equal (aref output 0) ?N)
               (display-warning "fcitx.el" "`fcitx' is not running. \
 Re-run the setup function after `fcitx' is started.")))
@@ -359,10 +361,11 @@ Re-run the setup function after `fcitx' is started.")))
   (call-process "fcitx-remote" nil nil nil "-c"))
 
 (defun fcitx--active-p-proc ()
-  (let ((output (with-temp-buffer
-                  (call-process "fcitx-remote" nil t)
-                  (buffer-string))))
-
+  (let ((output
+         (let (deactivate-mark)
+           (with-temp-buffer
+             (call-process "fcitx-remote" nil t)
+             (buffer-string)))))
     (char-equal
      (aref output 0) ?2)))
 
