@@ -2,83 +2,98 @@
 [[http://melpa.org/#/fcitx][file:http://melpa.org/packages/fcitx-badge.svg]]
 [[http://stable.melpa.org/#/fcitx][file:http://stable.melpa.org/packages/fcitx-badge.svg]]
 
-Make [[https://github.com/fcitx/fcitx/][fcitx]] better in Emacs.
+Better [[https://github.com/fcitx/fcitx/][fcitx]] integration for Emacs.
 
 [[./README-zh.org][中文版]]
 
 This package provides a set of functions to make fcitx work better in Emacs.
 
 * Setup
+  Recommendation: install this package from [[http://melpa.org][melpa]].
+
+  Or, if you like to manually install this package:
   : (add-to-list 'load-path "/path/to/fcitx.el")
   : (require 'fcitx)
 
-  Recommended though optional:
+  You can choose between two different setup commands: 
   : M-x fcitx-default-setup
-  
-  Alternatively, you can use a more aggressive setup:
+  or
   : M-x fcitx-aggressive-setup
 
-  The differences between these two setups will be illustrated later.
+  The differences between these two setups will be explained later.
+* Features
+  This package comes with a bunch of features to provide better =fcitx=
+  integration for Emacs. For every feature, you can enable or disable it using
+  the corresponding =*-turn-on= or =*-turn-off= command.
 
-  Calling =fcitx-default-setup= will enable all the features that this
-  package provides and use default settings. See the following sections for
-  details.
+  To simplify the configuration, we provide two different setup commands,
+  =fcitx-default-setup= and =fcitx-aggressive-setup=. They will enable different
+  lists of features. You can choose the setup command that fits your need best.
+  For users who want a better control, you can define and use your own setup
+  command by enabling the features you want using the =*-turn-on= commands.
 
-  Note that for every feature, there are both =*-turn-on= and =*-turn-off=
-  functions defined, which can enable and disable the corresponding feature,
-  respectively.
-  
-* Disable Fcitx by Prefix Keys
-  If you've enabled fcitx, then you can't easily change your buffer by "C-x b"
-  because the second key "b" will be blocked by fcitx(and you need to press
-  "enter" in order to send "b" to emacs). This package provides a way
-  to define the prefix keys after which you can temporarily disable fcitx.
-  
-  For example, you want to temporarily disable fcitx after you press "C-x" so
-  that you can directly type "b" after "C-x" and after you press "b", fcitx will
-  be activated again so you can still type Chinese buffer name. To define "C-x"
-  to be the prefix key that can temporarily disable fcitx:
-  : (fcitx-prefix-keys-add "C-x")
+** Features Enabled in Both setup commands
+   The following features are enabled in both =fcitx-default-setup= and
+   =fcitx-aggressive-setup=. You don't have to do anything if you're satisfied
+   with the default settings.
+*** Disable Fcitx by Prefix Keys
+    *Why this feature?*
+    
+    If you've enabled fcitx, then you can't easily change your buffer by =C-x b=
+    because the second key, =b=, will be blocked by fcitx(and you need to press
+    =enter= in order to send =b= to emacs). This feature allows you to
+    temporarily disable fcitx after pressing some prefix keys you've defined.
 
-  Usually, defining "C-x" and "C-c" to be such prefix keys is enough for most
-  users. You can simply use following command:
-  : (fcitx-prefix-keys-setup)
-  to add "C-x" and "C-c".
+    *What do the pre-defined setup comamnds do?*
+    
+    Both setup comamnds define =C-x= and =C-c= to be such prefix keys, which
+    means fcitx will be disabled after =C-x= or =C-c= is pressed. This setting
+    should be enough for most users.
 
-  After defining prefix keys, you need to call 
-  : (fcitx-prefix-keys-turn-on)
-  to enable this feature.
+    *For Spacemacs users*
 
-  Of course, you can use
-  : (fcitx-prefix-keys-turn-off)
-  to disable this feature.
+    If you're a Spacemacs user who uses it in the Emacs way(or hybrid mode), it
+    is possible that you want =M-m= to be the prefix key too. You can use the
+    following command to add =M-m=:
+    : (fcitx-prefix-keys-add "M-m")
 
-  Note if you use =M-x fcitx-default-setup=, then it already does all the
-  above things, i.e. adding "C-x" and "C-c" to be prefix keys and enabling this
-  feature, for you.
+    *For users who want more customizations*
 
-* Evil Support
-  To disable fcitx when you exiting "insert mode" and enable fcitx after
-  entering "insert mode" if originally you enable it in "insert mode":
-  : (fcitx-evil-turn-on)
+    You can define the prefix keys as you want:
+    : (fcitx-prefix-keys-add "C-x" "C-c" "C-h" "M-s" "M-o")
 
-  The evil states in which fcitx should be enabled are defined in the variable
-  =fcitx-active-evil-states=. The default value is =(insert emacs)=, which means
-  it will enable fcitx if necessary when entering =evil-insert-state= or
-  =evil-emacs-state=. For Spacemacs users who use its hybrid mode, you may also
-  want to add hybrid mode to the list:
-  : (setq fcitx-active-evil-states '(insert emacs hybrid))
+    After defining prefix keys, you need to call 
+    : (fcitx-prefix-keys-turn-on)
+    to enable this feature.
 
-  It will also disable fcitx if you use =switch-to-buffer= or =other-window= to
-  switch to a buffer which is not in insert state or Emacs state. For example,
-  if you're currently in insert mode in buffer =A= and you've enabled fcitx,
-  then you call =switch-to-buffer= to switch to another buffer =B=, which is
-  currently, say, in normal mode, then fcitx will be disabled in buffer =B=.
+    Of course, you can use
+    : (fcitx-prefix-keys-turn-off)
+    to disable this feature.
+*** Evil Support
+    *Why this feature?*
+    
+    This feature allows you to disable fcitx when you exit the "insert mode" and
+    to reenable fcitx after enter "insert mode".
 
-  Note that currently the Evil support is not perfect. If you come across any
-  bugs, consider filing an issue or creating a pull request.
+    *How to customize it*
 
-  Similarly, =M-x fcitx-default-setup= enables this feature.
+    The evil states in which fcitx should be enabled are defined in the variable
+    =fcitx-active-evil-states=. The default value is =(insert emacs)=, which
+    means fcitx will be enabled if necessary when entering =evil-insert-state=
+    or =evil-emacs-state=. For Spacemacs users who use its hybrid mode, you may
+    also want to add hybrid mode to the list:
+    : (setq fcitx-active-evil-states '(insert emacs hybrid))
+
+    It will also disable fcitx if you use =switch-to-buffer= or =other-window= to
+    switch to a buffer which is not in insert state or Emacs state. For example,
+    if you're currently in insert mode in buffer =A= and you've enabled fcitx,
+    then you call =switch-to-buffer= to switch to another buffer =B=, which is
+    currently, say, in normal mode, then fcitx will be disabled in buffer =B=.
+
+    Note that currently the Evil support is not perfect. If you come across any
+    bugs, consider filing an issue or creating a pull request.
+
+    Similarly, =M-x fcitx-default-setup= enables this feature.
 
 * =M-x=, =M-!=, =M-&= and =M-:= Support
   Usually you don't want to type Chinese when you use =M-x=, =M-!=
