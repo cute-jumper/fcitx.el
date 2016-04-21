@@ -531,12 +531,14 @@ Re-run the setup function after `fcitx' is started.")))
     (fcitx--evil-switch-buffer-after)))
 
 (defun fcitx--active-evil-states-exit ()
-  (unless (member evil-next-state fcitx-active-evil-states)
-    (fcitx--evil-insert-maybe-deactivate)))
+  (and (not (member evil-next-state fcitx-active-evil-states))
+       (not executing-kbd-macro)
+       (fcitx--evil-insert-maybe-deactivate)))
 
 (defun fcitx--active-evil-states-entry ()
-  (unless (member evil-previous-state fcitx-active-evil-states)
-    (fcitx--evil-insert-maybe-activate)))
+  (and (not (member evil-previous-state fcitx-active-evil-states))
+       (not executing-kbd-macro)
+       (fcitx--evil-insert-maybe-activate)))
 
 (defun fcitx--evil-modify-hooks (add-p)
   (dolist (state fcitx-active-evil-states)
