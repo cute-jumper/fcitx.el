@@ -32,6 +32,18 @@ This package provides a set of functions to make fcitx work better in Emacs.
   For users who want a better control, you can define and use your own setup
   command by enabling the features you want using the =*-turn-on= commands.
 
+** The feature list and =fcitx-default-setup= vs =fcitx-aggressive-setup=
+   *X* indicates that the corresponding feature is enabled.
+
+   | Feature                     | fcitx-default-setup | fcitx-aggressive-setup= |
+   |-----------------------------+---------------------+-------------------------|
+   | Prefix-key                  | X                   | X                       |
+   | Evil                        | X                   | X                       |
+   | Character & key input       | X                   | X                       |
+   | M-x,M-!,M-& and M-:         | X                   |                         |
+   | Disable fcitx in minibuffer |                     | X                       |
+   | Isearch                     |                     |                         |
+
 ** Features Enabled in Both Setup Commands
    The following features are enabled in both =fcitx-default-setup= and
    =fcitx-aggressive-setup=. You don't have to do anything if you're satisfied
@@ -103,6 +115,22 @@ This package provides a set of functions to make fcitx work better in Emacs.
       Note that currently the Evil support is not perfect. If you come across any
       bugs, consider filing an issue or creating a pull request.
 
+*** Character & Key Input Support
+    - *Why this feature*
+      - Case 1: If you're using =ace-pinyin=, you need to input a letter after
+        calling =ace-pinyin=.
+      - Case 2: You're using =C-h k= to see the binding for a key sequence.
+
+      In both cases, fcitx will block your input. This feature can make =fcitx=
+      automatically disabled when you're required to input a key sequence or a
+      character.
+
+    - *What do the pre-defined setup comamnds do*
+      Both commands call =(fcitx-read-funcs-turn-on)= to enable this feature.
+
+    - *What if I don't want it*
+      Just use =(fcitx-read-funcs-turn-off)= to disable it.
+
 ** Features Enabled *ONLY* in =fcitx-default-setup= Command
 *** =M-x=, =M-!=, =M-&= and =M-:= Support
     - *Why these features*
@@ -140,52 +168,38 @@ This package provides a set of functions to make fcitx work better in Emacs.
       like to temporarily disable fcitx in minibuffer, no matter in what kind of
       command. If you are the same as me, then you could choose this setup.
 
-    Basically, =fcitx-aggressive-setup= would setup prefix keys feature and Evil
-    support as =fcitx-default-setup= does, but it would not turn on =M-x=, =M-!=,
-    =M-&= and =M-:= support. Instead, it will call
-    =fcitx-aggressive-minibuffer-turn-on= to temporarily disable fcitx in all
-    commands that use minibuffer as a source of input, including, but not limited
-    to, =M-x=, =M-!=, =M-&= and =M-:=. That is why this is called
-    "aggressive-setup". For example, if you press "C-x b" to switch buffer, or
-    press "C-x C-f" to find file, fcitx will be disabled when you are in the
-    minibuffer. I prefer this setup because I don't use Chinese in my filename or
-    buffer name.
+    - *What does =fcitx-aggressive-setup= do*
 
-* Extra Functions
-  These functions are not enabled in either =fcitx-default-setup= or
-  =fcitx-aggressive-setup=. You need to enable them manually if you want to use
-  them.
-** I-search Support
-   Usually when you use fcitx, you also want to I-search in Chinese, so this
-   feature is not enabled by eith =fcitx-default-setup= or
-   =fcitx-aggressive-setup=. If you do want to disable fcitx when using
-   I-search, enable this feature explicitly by
-   : (fcitx-isearch-turn-on)
+      Unlike =fcitx-default-setup=, it would not turn on =M-x=, =M-!=, =M-&= and
+      =M-:= support. Instead, it will call =fcitx-aggressive-minibuffer-turn-on=
+      to temporarily disable fcitx in all commands that use minibuffer as a
+      source of input, including, but not limited to, =M-x=, =M-!=, =M-&= and
+      =M-:=. That is why this is called "aggressive-setup". For example, if you
+      press "C-x b" to switch buffer, or press "C-x C-f" to find file, fcitx
+      will be disabled when you are in the minibuffer so that you can type
+      English letters directly. However, if you choose =fcitx-default-setup=,
+      fcitx will not be disabled after you press "C-x b" or "C-x C-f". I prefer
+      this more aggressive setup because I don't use Chinese in my filename or
+      buffer name.
 
-** Character & Key Input Support
-   If you're using =ace-pinyin=, you need to input a letter after calling
-   =ace-pinyin=. =fcitx= can be automatically disabled by turning on the
-   following feature:
-   : (fcitx-read-funcs-turn-on)
+** Extra Functions That are not Enabled in Both Commands
+   These functions are not enabled in either =fcitx-default-setup= or
+   =fcitx-aggressive-setup=. You need to enable them manually if you want to use
+   them.
+*** I-search Support
+    Usually when you use fcitx, you also want to I-search in Chinese, so this
+    feature is not enabled by eith =fcitx-default-setup= or
+    =fcitx-aggressive-setup=. If you do want to disable fcitx when using
+    I-search, enable this feature explicitly by
+    : (fcitx-isearch-turn-on)
 
-   However, the current implementation of this feature has some problems. See
-   [[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]] and [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]].
-
-   So when to enable this feature?
-   1. If you're on *Linux* and set =fcitx-use-dbus= to be =t=, it is totally
-      fine if you enable this feature. Although this feature of =fcitx.el= will
-      not work as expected in all cases(see [[https://github.com/cute-jumper/fcitx.el/issues/12][issue #12]]), it does *no harm* for
-      you to enable this.
-   2. If you're on OS X and use Evil, the problem described in [[https://github.com/cute-jumper/fcitx.el/issues/14][issue #14]] may
-      happen. You can stiil enable this feature, using the following code:
-      : (fcitx-read-funcs-turn-on)
-      : (fcitx-read-key-sequence-turn-off)
-
-* D-Bus Version
-  For Linux users, you can set =fcitx-use-dbus= to be =t= to speed up a little:
+* Using D-Bus Interface
+  For Linux users, it is recommended that you set =fcitx-use-dbus= to be =t= to
+  speed up a little:
   : (setq fcitx-use-dbus t)
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
+
 * TODO TODO
   - Better Evil support
 
