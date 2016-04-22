@@ -435,7 +435,10 @@ Re-run the setup function after `fcitx' is started.")))
      ((and (equal (this-command-keys-vector) [])
            (not (fcitx--evil-adviced-commands-p last-command))
            (not (and fcitx--aggressive-p
-                     (window-minibuffer-p))))
+                     (window-minibuffer-p)))
+           (not (and
+                 (boundp 'which-key--paging-functions)
+                 (member this-command which-key--paging-functions))))
       (fcitx--prefix-keys-maybe-activate)))))
 
 ;;;###autoload
