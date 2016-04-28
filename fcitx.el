@@ -594,10 +594,12 @@ Re-run the setup function after `fcitx' is started.")))
 (fcitx--defun-maybe "minibuffer")
 
 (defun fcitx--minibuffer (orig-fun &rest args)
-  (fcitx--minibuffer-maybe-deactivate)
-  (unwind-protect
+  (if executing-kbd-macro
       (apply orig-fun args)
-    (fcitx--minibuffer-maybe-activate)))
+    (fcitx--minibuffer-maybe-deactivate)
+    (unwind-protect
+        (apply orig-fun args)
+      (fcitx--minibuffer-maybe-activate))))
 
 (defmacro fcitx-defun-minibuffer-on-off (func-name command)
   (let ((turn-on-func-name (intern
