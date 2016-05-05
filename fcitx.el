@@ -870,6 +870,34 @@ Re-run the setup function after `fcitx' is started.")))
   (remove-hook 'isearch-mode-hook #'fcitx--isearch-maybe-deactivate)
   (remove-hook 'isearch-mode-end-hook #'fcitx--isearch-maybe-activate))
 
+;; ----------------- ;;
+;; org-speed-command ;;
+;; ----------------- ;;
+(fcitx--defun-maybe "org-speed-command")
+
+(defun fcitx--org-post-command-hook ()
+  (if (and (bolp) (looking-at org-outline-regexp))
+      (fcitx--org-speed-command-maybe-deactivate)
+    (unless (fcitx--evil-should-disable-fcitx-p)
+      (fcitx--org-speed-command-maybe-activate))))
+
+(defun fcitx--org-mode-hook ()
+  (add-hook 'post-command-hook 'fcitx--org-post-command-hook nil t))
+
+;;;###autoload
+(defun fcitx-org-speed-command-turn-on ()
+  (interactive)
+  (add-hook 'org-mode-hook #'fcitx--org-mode-hook))
+
+;;;###autoload
+(defun fcitx-org-speed-command-turn-off ()
+  (interactive)
+  (remove-hook 'org-mode-hook #'fcitx--org-mode-hook))
+
+;; -------------- ;;
+;; Setup commands ;;
+;; -------------- ;;
+
 ;;;###autoload
 (defun fcitx-default-setup ()
   "Default setup for `fcitx'."
@@ -885,7 +913,9 @@ Re-run the setup function after `fcitx' is started.")))
     ;; enable read-* function support
     (fcitx-read-funcs-turn-on)
     ;; enable evil-related features
-    (fcitx-evil-turn-on)))
+    (fcitx-evil-turn-on)
+    ;; enable org-speed-command support
+    (fcitx-org-speed-command-turn-on)))
 
 ;;;###autoload
 (defun fcitx-aggressive-setup ()
@@ -900,7 +930,9 @@ Re-run the setup function after `fcitx' is started.")))
     ;; enable evil-related features
     (fcitx-evil-turn-on)
     ;; disable fcitx in minibuffer
-    (fcitx-aggressive-minibuffer-turn-on)))
+    (fcitx-aggressive-minibuffer-turn-on)
+    ;; enable org-speed-command support
+    (fcitx-org-speed-command-turn-on)))
 
 (provide 'fcitx)
 ;;; fcitx.el ends here
