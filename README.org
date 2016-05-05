@@ -49,7 +49,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
   For users who want a better control, you can define and use your own setup
   command by enabling the features you want using the =*-turn-on= commands.
 
-** The feature list and =fcitx-default-setup= vs =fcitx-aggressive-setup=
+** The Feature List
    *X* indicates that the corresponding feature is enabled.
 
    | Feature                     | fcitx-default-setup | fcitx-aggressive-setup |
@@ -59,6 +59,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
    | Character & key input       | X                   | X                      |
    | M-x,M-!,M-& and M-:         | X                   |                        |
    | Disable fcitx in minibuffer |                     | X                      |
+   | org-speed-command support   | X                   | X                      |
    | Isearch                     |                     |                        |
 
 ** Features Enabled in Both Setup Commands
@@ -148,7 +149,23 @@ This package provides a set of functions to make fcitx work better in Emacs.
 
     - *What if I don't want it*
 
-      Just use =(fcitx-read-funcs-turn-off)= to disable it.
+      Use =(fcitx-read-funcs-turn-off)= to disable it.
+
+*** =org-speed-command= Support
+    - *Why this feature*
+
+      This feature allows fcitx to be disabled when the cursor is at the
+      beginning of an org heading so that you can use speed keys such as =n= and
+      =p=.
+
+    - *What do the pre-defined setup comamnds do*
+
+      Both commands call =(fcitx-org-speed-command-turn-on)= to enable this
+      feature.
+
+    - *What if I don't want it*
+
+      Use =(fcitx-org-speed-command-turn-off)= to disable it.
 
 ** Features Enabled *ONLY* in =fcitx-default-setup= Command
 *** =M-x=, =M-!=, =M-&= and =M-:= Support
