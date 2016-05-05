@@ -21,6 +21,23 @@ This package provides a set of functions to make fcitx work better in Emacs.
   : M-x fcitx-aggressive-setup
 
   The differences between these two setups will be explained later.
+
+* Example Settings
+  All the examples below use =fcitx-aggressive-setup=.
+
+  For Emacs users on Linux:
+  : (fcitx-aggressive-setup)
+  : (setq fcitx-use-dbus t)
+
+  For Emacs users on OS X:
+  : (fcitx-aggressive-setup)
+
+  For Spacemacs users:
+  : (fcitx-aggressive-setup)
+  : (setq fcitx-active-evil-states '(insert emacs hybird)) ; if you use hybrid mode
+  : (fcitx-prefix-keys-add "M-m") ; M-m is common in Spacemacs
+  : ;; (setq fcitx-use-dbus t) ; uncomment if you're using Linux
+
 * Features
   This package comes with a bunch of features to provide better =fcitx=
   integration for Emacs. For every feature, you can enable or disable it using
@@ -35,14 +52,14 @@ This package provides a set of functions to make fcitx work better in Emacs.
 ** The feature list and =fcitx-default-setup= vs =fcitx-aggressive-setup=
    *X* indicates that the corresponding feature is enabled.
 
-   | Feature                     | fcitx-default-setup | fcitx-aggressive-setup= |
-   |-----------------------------+---------------------+-------------------------|
-   | Prefix-key                  | X                   | X                       |
-   | Evil                        | X                   | X                       |
-   | Character & key input       | X                   | X                       |
-   | M-x,M-!,M-& and M-:         | X                   |                         |
-   | Disable fcitx in minibuffer |                     | X                       |
-   | Isearch                     |                     |                         |
+   | Feature                     | fcitx-default-setup | fcitx-aggressive-setup |
+   |-----------------------------+---------------------+------------------------|
+   | Prefix-key                  | X                   | X                      |
+   | Evil                        | X                   | X                      |
+   | Character & key input       | X                   | X                      |
+   | M-x,M-!,M-& and M-:         | X                   |                        |
+   | Disable fcitx in minibuffer |                     | X                      |
+   | Isearch                     |                     |                        |
 
 ** Features Enabled in Both Setup Commands
    The following features are enabled in both =fcitx-default-setup= and
@@ -126,9 +143,11 @@ This package provides a set of functions to make fcitx work better in Emacs.
       character.
 
     - *What do the pre-defined setup comamnds do*
+
       Both commands call =(fcitx-read-funcs-turn-on)= to enable this feature.
 
     - *What if I don't want it*
+
       Just use =(fcitx-read-funcs-turn-off)= to disable it.
 
 ** Features Enabled *ONLY* in =fcitx-default-setup= Command
@@ -140,7 +159,7 @@ This package provides a set of functions to make fcitx work better in Emacs.
       (=eval-expression=). You can automatically disable fcitx when you're using
       these commands.
 
-    - *What does =fcitx-default-setup= do*
+    - *What does fcitx-default-setup do*
 
       It enables these features by calling the following commands:
       : (fcitx-M-x-turn-on)
@@ -168,19 +187,20 @@ This package provides a set of functions to make fcitx work better in Emacs.
       like to temporarily disable fcitx in minibuffer, no matter in what kind of
       command. If you are the same as me, then you could choose this setup.
 
-    - *What does =fcitx-aggressive-setup= do*
+    - *What does fcitx-aggressive-setup do*
 
       Unlike =fcitx-default-setup=, it would not turn on =M-x=, =M-!=, =M-&= and
       =M-:= support. Instead, it will call =fcitx-aggressive-minibuffer-turn-on=
       to temporarily disable fcitx in all commands that use minibuffer as a
       source of input, including, but not limited to, =M-x=, =M-!=, =M-&= and
       =M-:=. That is why this is called "aggressive-setup". For example, if you
-      press "C-x b" to switch buffer, or press "C-x C-f" to find file, fcitx
-      will be disabled when you are in the minibuffer so that you can type
-      English letters directly. However, if you choose =fcitx-default-setup=,
-      fcitx will not be disabled after you press "C-x b" or "C-x C-f". I prefer
-      this more aggressive setup because I don't use Chinese in my filename or
-      buffer name.
+      press @@html:<kbd>@@C-x b@@html:</kbd>@@ to switch buffer, or press
+      @@html:<kbd>@@C-x C-f@@html:</kbd>@@ to find file, fcitx will be disabled
+      when you are in the minibuffer so that you can type English letters
+      directly. However, if you choose =fcitx-default-setup=, fcitx will not be
+      disabled after you press @@html:<kbd>@@C-x b@@html:</kbd>@@ or
+      @@html:<kbd>@@C-x C-f@@html:</kbd>@@. I prefer this more aggressive setup
+      because I don't use Chinese in my filename or buffer name.
 
 ** Extra Functions That are not Enabled in Both Commands
    These functions are not enabled in either =fcitx-default-setup= or
@@ -199,22 +219,6 @@ This package provides a set of functions to make fcitx work better in Emacs.
   : (setq fcitx-use-dbus t)
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
-
-* Example settings
-  All the examples below use =fcitx-aggressive-setup=.
-
-  For Emacs users on Linux:
-  : (fcitx-aggressive-setup)
-  : (setq fcitx-use-dbus t)
-
-  For Emacs users on OS X:
-  : (fcitx-aggressive-setup)
-
-  For Spacemacs users:
-  : (fcitx-aggressive-setup)
-  : (setq fcitx-active-evil-states '(insert emacs hybird)) ; if you use hybrid mode
-  : (fcitx-prefix-keys-add "M-m") ; M-m is common in Spacemacs
-  : ;; (setq fcitx-use-dbus t) ; uncomment if you're using Linux
 
 * TODO TODO
   - Better Evil support
