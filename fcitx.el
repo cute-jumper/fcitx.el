@@ -35,24 +35,39 @@
 ;; _________________
 
 ;; 1 Setup
-;; 2 Disable Fcitx by Prefix Keys
-;; 3 Evil Support
-;; 4 `M-x', `M-!', `M-&' and `M-:' Support
-;; 5 Aggressive setup
-;; 6 Extra Functions
-;; .. 6.1 I-search Support
-;; .. 6.2 Character & Key Input Support
-;; 7 D-Bus Version
-;; 8 TODO TODO
+;; 2 Features
+;; .. 2.1 The feature list and `fcitx-default-setup' vs `fcitx-aggressive-setup'
+;; .. 2.2 Features Enabled in Both Setup Commands
+;; ..... 2.2.1 Disable Fcitx by Prefix Keys
+;; ..... 2.2.2 Evil Support
+;; ..... 2.2.3 Character & Key Input Support
+;; .. 2.3 Features Enabled *ONLY* in `fcitx-default-setup' Command
+;; ..... 2.3.1 `M-x', `M-!', `M-&' and `M-:' Support
+;; .. 2.4 Features Enabled *ONLY* in `fcitx-aggressive-setup' Command
+;; ..... 2.4.1 Disable Fcitx in Minibuffer
+;; .. 2.5 Extra Functions That are not Enabled in Both Commands
+;; ..... 2.5.1 I-search Support
+;; 3 Using D-Bus Interface
+;; 4 Example settings
+;; 5 TODO TODO
 
 
-;; Make [fcitx] better in Emacs.
+;; [[file:http://melpa.org/packages/fcitx-badge.svg]]
+;; [[file:http://stable.melpa.org/packages/fcitx-badge.svg]]
+
+;; Better [fcitx] integration for Emacs.
 
 ;; [中文版]
 
 ;; This package provides a set of functions to make fcitx work better in
 ;; Emacs.
 
+
+;; [[file:http://melpa.org/packages/fcitx-badge.svg]]
+;; http://melpa.org/#/fcitx
+
+;; [[file:http://stable.melpa.org/packages/fcitx-badge.svg]]
+;; http://stable.melpa.org/#/fcitx
 
 ;; [fcitx] https://github.com/fcitx/fcitx/
 
@@ -62,158 +77,254 @@
 ;; 1 Setup
 ;; =======
 
+;;   Recommendation: install this package from [melpa].
+
+;;   Or, if you like to manually install this package:
 ;;   ,----
 ;;   | (add-to-list 'load-path "/path/to/fcitx.el")
 ;;   | (require 'fcitx)
 ;;   `----
 
-;;   Recommended though optional:
+;;   You can choose between two different setup commands:
 ;;   ,----
 ;;   | M-x fcitx-default-setup
 ;;   `----
-
-;;   Alternatively, you can use a more aggressive setup:
+;;   or
 ;;   ,----
 ;;   | M-x fcitx-aggressive-setup
 ;;   `----
 
-;;   The differences between these two setups will be illustrated later.
-
-;;   Calling `fcitx-default-setup' will enable all the features that this
-;;   package provides and use default settings. See the following sections
-;;   for details.
-
-;;   Note that for every feature, there are both `*-turn-on' and
-;;   `*-turn-off' functions defined, which can enable and disable the
-;;   corresponding feature, respectively.
+;;   The differences between these two setups will be explained later.
 
 
-;; 2 Disable Fcitx by Prefix Keys
-;; ==============================
-
-;;   If you've enabled fcitx, then you can't easily change your buffer by
-;;   "C-x b" because the second key "b" will be blocked by fcitx(and you
-;;   need to press "enter" in order to send "b" to emacs). This package
-;;   provides a way to define the prefix keys after which you can
-;;   temporarily disable fcitx.
-
-;;   For example, you want to temporarily disable fcitx after you press
-;;   "C-x" so that you can directly type "b" after "C-x" and after you
-;;   press "b", fcitx will be activated again so you can still type Chinese
-;;   buffer name. To define "C-x" to be the prefix key that can temporarily
-;;   disable fcitx:
-;;   ,----
-;;   | (fcitx-prefix-keys-add "C-x")
-;;   `----
-
-;;   Usually, defining "C-x" and "C-c" to be such prefix keys is enough for
-;;   most users. You can simply use following command:
-;;   ,----
-;;   | (fcitx-prefix-keys-setup)
-;;   `----
-;;   to add "C-x" and "C-c".
-
-;;   After defining prefix keys, you need to call
-;;   ,----
-;;   | (fcitx-prefix-keys-turn-on)
-;;   `----
-;;   to enable this feature.
-
-;;   Of course, you can use
-;;   ,----
-;;   | (fcitx-prefix-keys-turn-off)
-;;   `----
-;;   to disable this feature.
-
-;;   Note if you use `M-x fcitx-default-setup', then it already does all
-;;   the above things, i.e. adding "C-x" and "C-c" to be prefix keys and
-;;   enabling this feature, for you.
+;; [melpa] http://melpa.org
 
 
-;; 3 Evil Support
-;; ==============
+;; 2 Features
+;; ==========
 
-;;   To disable fcitx when you exiting "insert mode" and enable fcitx after
-;;   entering "insert mode" if originally you enable it in "insert mode":
-;;   ,----
-;;   | (fcitx-evil-turn-on)
-;;   `----
+;;   This package comes with a bunch of features to provide better `fcitx'
+;;   integration for Emacs. For every feature, you can enable or disable it
+;;   using the corresponding `*-turn-on' or `*-turn-off' command.
 
-;;   The evil states in which fcitx should be enabled are defined in the
-;;   variable `fcitx-active-evil-states'. The default value is `(insert
-;;   emacs)', which means it will enable fcitx if necessary when entering
-;;   `evil-insert-state' or `evil-emacs-state'. For Spacemacs users who use
-;;   its hybrid mode, you may also want to add hybrid mode to the list:
-;;   ,----
-;;   | (setq fcitx-active-evil-states '(insert emacs hybrid))
-;;   `----
-
-;;   It will also disable fcitx if you use `switch-to-buffer' or
-;;   `other-window' to switch to a buffer which is not in insert state or
-;;   Emacs state. For example, if you're currently in insert mode in buffer
-;;   `A' and you've enabled fcitx, then you call `switch-to-buffer' to
-;;   switch to another buffer `B', which is currently, say, in normal mode,
-;;   then fcitx will be disabled in buffer `B'.
-
-;;   Note that currently the Evil support is not perfect. If you come
-;;   across any bugs, consider filing an issue or creating a pull request.
-
-;;   Similarly, `M-x fcitx-default-setup' enables this feature.
+;;   To simplify the configuration, we provide two different setup
+;;   commands, `fcitx-default-setup' and `fcitx-aggressive-setup'. They
+;;   will enable different lists of features. You can choose the setup
+;;   command that fits your need best. For users who want a better control,
+;;   you can define and use your own setup command by enabling the features
+;;   you want using the `*-turn-on' commands.
 
 
-;; 4 `M-x', `M-!', `M-&' and `M-:' Support
-;; =======================================
+;; 2.1 The feature list and `fcitx-default-setup' vs `fcitx-aggressive-setup'
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;;   Usually you don't want to type Chinese when you use `M-x', `M-!'
-;;   (`shell-command'), `M-&' (`async-shell-command') or `M-:'
-;;   (`eval-expression'). You can use:
-;;   ,----
-;;   | (fcitx-M-x-turn-on)
-;;   | (fcitx-shell-command-turn-on)
-;;   | (fcitx-eval-expression-turn-on)
-;;   `----
-;;   to disable fcitx temporarily in these commands.
+;;   *X* indicates that the corresponding feature is enabled.
 
-;;   `M-x' should work with the original `M-x'
-;;   (`execute-extended-command'), `smex', `helm-M-x' and `counsel-M-x'.
-
-;;   Again, `M-x fcitx-default-setup' enables all these three features.
-
-;;   Note: If you rebind `M-x' to `smex', `helm-M-x' or `counsel-M-x', then
-;;   you should call `fcitx-default-setup' or `fcitx-M-x-turn-on' *after* the
-;;   rebinding.
+;;    Feature                      fcitx-default-setup  fcitx-aggressive-setup=
+;;   ---------------------------------------------------------------------------
+;;    Prefix-key                   X                    X
+;;    Evil                         X                    X
+;;    Character & key input        X                    X
+;;    M-x,M-!,M-& and M-:          X
+;;    Disable fcitx in minibuffer                       X
+;;    Isearch
 
 
-;; 5 Aggressive setup
-;; ==================
+;; 2.2 Features Enabled in Both Setup Commands
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;;   For me, I personally don't need to type Chinese in minibuffer, so I
-;;   would like to temporarily disable fcitx in minibuffer, no matter in
-;;   what kind of command. If you are the same as me, then you could choose
-;;   this setup.
-
-;;   Basically, `fcitx-aggressive-setup' would setup prefix keys feature
-;;   and Evil support as `fcitx-default-setup' does, but it would not turn
-;;   on `M-x', `M-!', `M-&' and `M-:' support. Instead, it will call
-;;   `fcitx-aggressive-minibuffer-turn-on' to temporarily disable fcitx in
-;;   all commands that use minibuffer as a source of input, including, but
-;;   not limited to, `M-x', `M-!', `M-&' and `M-:'. That is why this is
-;;   called "aggressive-setup". For example, if you press "C-x b" to switch
-;;   buffer, or press "C-x C-f" to find file, fcitx will be disabled when
-;;   you are in the minibuffer. I prefer this setup because I don't use
-;;   Chinese in my filename or buffer name.
+;;   The following features are enabled in both `fcitx-default-setup' and
+;;   `fcitx-aggressive-setup'. You don't have to do anything if you're
+;;   satisfied with the default settings.
 
 
-;; 6 Extra Functions
-;; =================
+;; 2.2.1 Disable Fcitx by Prefix Keys
+;; ----------------------------------
+
+;;   - *Why this feature*
+
+;;     If you've enabled fcitx, then you can't easily change your buffer by
+;;     `C-x b' because the second key, `b', will be blocked by fcitx(and
+;;     you need to press `enter' in order to send `b' to emacs). This
+;;     feature allows you to temporarily disable fcitx after pressing some
+;;     prefix keys you've defined.
+
+;;   - *What do the pre-defined setup comamnds do*
+
+;;     Both setup comamnds define `C-x' and `C-c' to be such prefix keys,
+;;     which means fcitx will be disabled after `C-x' or `C-c' is pressed.
+;;     This setting should be enough for most users.
+
+;;   - *For Spacemacs users*
+
+;;     If you're a Spacemacs user who uses it in the Emacs way(or hybrid
+;;     mode), it is possible that you want `M-m' to be the prefix key too.
+;;     You can use the following command to add `M-m':
+;;     ,----
+;;     | (fcitx-prefix-keys-add "M-m")
+;;     `----
+
+;;   - *For users who want more customizations*
+
+;;     You can define the prefix keys as you want:
+;;     ,----
+;;     | (fcitx-prefix-keys-add "C-x" "C-c" "C-h" "M-s" "M-o")
+;;     `----
+
+;;     After defining prefix keys, you need to call
+;;     ,----
+;;     | (fcitx-prefix-keys-turn-on)
+;;     `----
+;;     to enable this feature.
+
+;;     Of course, you can use
+;;     ,----
+;;     | (fcitx-prefix-keys-turn-off)
+;;     `----
+;;     to disable this feature.
+
+
+;; 2.2.2 Evil Support
+;; ------------------
+
+;;   - *Why this feature*
+
+;;     This feature allows you to disable fcitx when you exit the "insert
+;;     mode" and to reenable fcitx after enter "insert mode". Similar to
+;;     [fcitx.vim].
+
+;;     In addition, it will also disable fcitx if you use
+;;     `switch-to-buffer' or `other-window' to switch to a buffer which is
+;;     not in "insert mode". For example, if you're currently in "insert
+;;     mode" in buffer `A' and you've enabled fcitx, then you call
+;;     `switch-to-buffer' to switch to another buffer `B', which is
+;;     currently, say, in normal mode, then fcitx will be disabled in
+;;     buffer `B'.
+
+;;   - *What do the pre-defined setup comamnds do*
+
+;;     Both setup commands enable this feature. By default, `fcitx.el'
+;;     consider both `evil-insert-state' and `evil-emacs-state' as "insert
+;;     mode". Any transition from `evil-insert-state' or `evil-emacs-state'
+;;     to any other evil state will disable fcitx if necessary.
+
+;;   - *How to customize it*
+
+;;     The evil states in which fcitx should be enabled are defined in the
+;;     variable `fcitx-active-evil-states'. The default value is `(insert
+;;     emacs)', which means fcitx will be enabled if necessary when
+;;     entering `evil-insert-state' or `evil-emacs-state'. For Spacemacs
+;;     users who use its hybrid mode, you may also want to add hybrid mode
+;;     to the list:
+;;     ,----
+;;     | (setq fcitx-active-evil-states '(insert emacs hybrid))
+;;     `----
+
+;;   - *Bugs*
+
+;;     Note that currently the Evil support is not perfect. If you come
+;;     across any bugs, consider filing an issue or creating a pull
+;;     request.
+
+
+;; [fcitx.vim] https://github.com/vim-scripts/fcitx.vim
+
+
+;; 2.2.3 Character & Key Input Support
+;; -----------------------------------
+
+;;   - *Why this feature*
+;;     - Case 1: If you're using `ace-pinyin', you need to input a letter
+;;       after calling `ace-pinyin'.
+;;     - Case 2: You're using `C-h k' to see the binding for a key
+;;       sequence.
+;;     In both cases, fcitx will block your input. This feature can make
+;;     `fcitx' automatically disabled when you're required to input a key
+;;     sequence or a character.
+
+;;   - *What do the pre-defined setup comamnds do* Both commands call
+;;           `(fcitx-read-funcs-turn-on)' to enable this feature.
+
+;;   - *What if I don't want it* Just use `(fcitx-read-funcs-turn-off)' to
+;;           disable it.
+
+
+;; 2.3 Features Enabled *ONLY* in `fcitx-default-setup' Command
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;; 2.3.1 `M-x', `M-!', `M-&' and `M-:' Support
+;; -------------------------------------------
+
+;;   - *Why these features*
+
+;;     Usually you don't want to type Chinese when you use `M-x', `M-!'
+;;     (`shell-command'), `M-&' (`async-shell-command') or `M-:'
+;;     (`eval-expression'). You can automatically disable fcitx when you're
+;;     using these commands.
+
+;;   - *What does `fcitx-default-setup' do*
+
+;;     It enables these features by calling the following commands:
+;;     ,----
+;;     | (fcitx-M-x-turn-on)
+;;     | (fcitx-shell-command-turn-on)
+;;     | (fcitx-eval-expression-turn-on)
+;;     `----
+
+;;     Your `M-x' binding should be one of `execute-extended-command' (the
+;;     default `M-x' command), `smex' , `helm-M-x' and `counsel-M-x'.
+
+;;     *WARNING*: If you rebind `M-x' to `smex', `helm-M-x', or
+;;     `counsel-M-x', then you should call `fcitx-default-setup' or
+;;     `fcitx-M-x-turn-on' *after* the key rebinding.
+
+;;   - *How to customize it*
+
+;;     You can enable some of the above three features by calling their
+;;     corresponding `*-turn-on' commands, but remember if you rebind your
+;;     `M-x', you should call `(fcitx-M-x-turn-on)' after the key
+;;     rebinding.
+
+
+;; 2.4 Features Enabled *ONLY* in `fcitx-aggressive-setup' Command
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;; 2.4.1 Disable Fcitx in Minibuffer
+;; ---------------------------------
+
+;;   - *Why this features*
+
+;;     For me, I personally don't need to type Chinese in minibuffer, so I
+;;     would like to temporarily disable fcitx in minibuffer, no matter in
+;;     what kind of command. If you are the same as me, then you could
+;;     choose this setup.
+
+;;   - *What does `fcitx-aggressive-setup' do*
+
+;;     Unlike `fcitx-default-setup', it would not turn on `M-x', `M-!',
+;;     `M-&' and `M-:' support. Instead, it will call
+;;     `fcitx-aggressive-minibuffer-turn-on' to temporarily disable fcitx
+;;     in all commands that use minibuffer as a source of input, including,
+;;     but not limited to, `M-x', `M-!', `M-&' and `M-:'. That is why this
+;;     is called "aggressive-setup". For example, if you press "C-x b" to
+;;     switch buffer, or press "C-x C-f" to find file, fcitx will be
+;;     disabled when you are in the minibuffer so that you can type English
+;;     letters directly. However, if you choose `fcitx-default-setup',
+;;     fcitx will not be disabled after you press "C-x b" or "C-x C-f". I
+;;     prefer this more aggressive setup because I don't use Chinese in my
+;;     filename or buffer name.
+
+
+;; 2.5 Extra Functions That are not Enabled in Both Commands
+;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;;   These functions are not enabled in either `fcitx-default-setup' or
 ;;   `fcitx-aggressive-setup'. You need to enable them manually if you want
 ;;   to use them.
 
 
-;; 6.1 I-search Support
-;; ~~~~~~~~~~~~~~~~~~~~
+;; 2.5.1 I-search Support
+;; ----------------------
 
 ;;   Usually when you use fcitx, you also want to I-search in Chinese, so
 ;;   this feature is not enabled by eith `fcitx-default-setup' or
@@ -224,43 +335,11 @@
 ;;   `----
 
 
-;; 6.2 Character & Key Input Support
-;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;; 3 Using D-Bus Interface
+;; =======================
 
-;;   If you're using `ace-pinyin', you need to input a letter after calling
-;;   `ace-pinyin'. `fcitx' can be automatically disabled by turning on the
-;;   following feature:
-;;   ,----
-;;   | (fcitx-read-funcs-turn-on)
-;;   `----
-
-;;   However, the current implementation of this feature has some problems.
-;;   See [issue #12] and [issue #14].
-
-;;   So when to enable this feature?
-;;   1. If you're on *Linux* and set `fcitx-use-dbus' to be `t', it is
-;;      totally fine if you enable this feature. Although this feature of
-;;      `fcitx.el' will not work as expected in all cases(see [issue #12]),
-;;      it does *no harm* for you to enable this.
-;;   2. If you're on OS X and use Evil, the problem described in [issue
-;;      #14] may happen. You can stiil enable this feature, using the
-;;      following code:
-;;      ,----
-;;      | (fcitx-read-funcs-turn-on)
-;;      | (fcitx-read-key-sequence-turn-off)
-;;      `----
-
-
-;;   [issue #12] https://github.com/cute-jumper/fcitx.el/issues/12
-
-;;   [issue #14] https://github.com/cute-jumper/fcitx.el/issues/14
-
-
-;; 7 D-Bus Version
-;; ===============
-
-;;   For Linux users, you can set `fcitx-use-dbus' to be `t' to speed up a
-;;   little:
+;;   For Linux users, it is recommended that you set `fcitx-use-dbus' to be
+;;   `t' to speed up a little:
 ;;   ,----
 ;;   | (setq fcitx-use-dbus t)
 ;;   `----
@@ -268,16 +347,42 @@
 ;;   For OSX users who use [fcitx-remote-for-osx], don't set this variable.
 
 
-;;   [fcitx-remote-for-osx]
-;;   https://github.com/CodeFalling/fcitx-remote-for-osx
+;; [fcitx-remote-for-osx]
+;; https://github.com/CodeFalling/fcitx-remote-for-osx
 
 
-;; 8 TODO TODO
+;; 4 Example settings
+;; ==================
+
+;;   All the examples below use `fcitx-aggressive-setup'.
+
+;;   For Emacs users on Linux:
+;;   ,----
+;;   | (fcitx-aggressive-setup)
+;;   | (setq fcitx-use-dbus t)
+;;   `----
+
+;;   For Emacs users on OS X:
+;;   ,----
+;;   | (fcitx-aggressive-setup)
+;;   `----
+
+;;   For Spacemacs users:
+;;   ,----
+;;   | (fcitx-aggressive-setup)
+;;   | (setq fcitx-active-evil-states '(insert emacs hybird)) ; if you use hybrid mode
+;;   | (fcitx-prefix-keys-add "M-m") ; M-m is common in Spacemacs
+;;   | ;; (setq fcitx-use-dbus t) ; uncomment if you're using Linux
+;;   `----
+
+
+;; 5 TODO TODO
 ;; ===========
 
 ;;   - Better Evil support
 
 ;;   For more features, pull requests are always welcome!
+;;
 
 ;;; Code:
 

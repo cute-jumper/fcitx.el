@@ -200,6 +200,22 @@ This package provides a set of functions to make fcitx work better in Emacs.
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
 
+* Example settings
+  All the examples below use =fcitx-aggressive-setup=.
+
+  For Emacs users on Linux:
+  : (fcitx-aggressive-setup)
+  : (setq fcitx-use-dbus t)
+
+  For Emacs users on OS X:
+  : (fcitx-aggressive-setup)
+
+  For Spacemacs users:
+  : (fcitx-aggressive-setup)
+  : (setq fcitx-active-evil-states '(insert emacs hybird)) ; if you use hybrid mode
+  : (fcitx-prefix-keys-add "M-m") ; M-m is common in Spacemacs
+  : ;; (setq fcitx-use-dbus t) ; uncomment if you're using Linux
+
 * TODO TODO
   - Better Evil support
 
