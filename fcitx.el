@@ -37,11 +37,12 @@
 ;; 1 Setup
 ;; 2 Example Settings
 ;; 3 Features
-;; .. 3.1 The feature list and `fcitx-default-setup' vs `fcitx-aggressive-setup'
+;; .. 3.1 The Feature List
 ;; .. 3.2 Features Enabled in Both Setup Commands
 ;; ..... 3.2.1 Disable Fcitx by Prefix Keys
 ;; ..... 3.2.2 Evil Support
 ;; ..... 3.2.3 Character & Key Input Support
+;; ..... 3.2.4 `org-speed-command' Support
 ;; .. 3.3 Features Enabled *ONLY* in `fcitx-default-setup' Command
 ;; ..... 3.3.1 `M-x', `M-!', `M-&' and `M-:' Support
 ;; .. 3.4 Features Enabled *ONLY* in `fcitx-aggressive-setup' Command
@@ -140,8 +141,8 @@
 ;;   you want using the `*-turn-on' commands.
 
 
-;; 3.1 The feature list and `fcitx-default-setup' vs `fcitx-aggressive-setup'
-;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;; 3.1 The Feature List
+;; ~~~~~~~~~~~~~~~~~~~~
 
 ;;   *X* indicates that the corresponding feature is enabled.
 
@@ -152,6 +153,7 @@
 ;;    Character & key input        X                    X
 ;;    M-x,M-!,M-& and M-:          X
 ;;    Disable fcitx in minibuffer                       X
+;;    org-speed-command support    X                    X
 ;;    Isearch
 
 
@@ -274,7 +276,26 @@
 
 ;;   - *What if I don't want it*
 
-;;     Just use `(fcitx-read-funcs-turn-off)' to disable it.
+;;     Use `(fcitx-read-funcs-turn-off)' to disable it.
+
+
+;; 3.2.4 `org-speed-command' Support
+;; ---------------------------------
+
+;;   - *Why this feature*
+
+;;     This feature allows fcitx to be disabled when the cursor is at the
+;;     beginning of an org heading so that you can use speed keys such as
+;;     `n' and `p'.
+
+;;   - *What do the pre-defined setup comamnds do*
+
+;;     Both commands call `(fcitx-org-speed-command-turn-on)' to enable
+;;     this feature.
+
+;;   - *What if I don't want it*
+
+;;     Use `(fcitx-org-speed-command-turn-off)' to disable it.
 
 
 ;; 3.3 Features Enabled *ONLY* in `fcitx-default-setup' Command
@@ -385,7 +406,6 @@
 ;;   - Better Evil support
 
 ;;   For more features, pull requests are always welcome!
-;;
 
 ;;; Code:
 
