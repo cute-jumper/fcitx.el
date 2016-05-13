@@ -668,7 +668,8 @@ Re-run the setup function after `fcitx' is started.")))
        (fcitx--evil-insert-maybe-deactivate)))
 
 (defun fcitx--active-evil-states-entry ()
-  (and (not (member evil-previous-state fcitx-active-evil-states))
+  (and (not (eq evil-previous-state 'operator))
+       (not (member evil-previous-state fcitx-active-evil-states))
        (not executing-kbd-macro)
        (fcitx--evil-insert-maybe-activate)))
 
