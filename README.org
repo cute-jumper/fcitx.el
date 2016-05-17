@@ -4,7 +4,11 @@
 
 Better [[https://github.com/fcitx/fcitx/][fcitx]] integration for Emacs.
 
-[[./README-zh.org][中文版]]
+Note: it is possible to make =fcitx.el= to work with other input methods since
+=fcitx.el= is not tightly coupled with =fcitx= itself. See the following section
+*Work with Other Input Methods* for more details.
+
+[[./README-zh.org][中文版(需要更新）]]
 
 This package provides a set of functions to make fcitx work better in Emacs.
 
@@ -238,6 +242,23 @@ This package provides a set of functions to make fcitx work better in Emacs.
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
 
+* Work with Other Input Methods
+  Although this package is named =fcitx.el=, it is not tightly coupled with
+  =fcitx= itself. =fcitx.el= makes use of the tool =fcitx-remote= (or the dbus
+  interface in Linux) to do the following two things:
+  1. Know the status of the current input method (active or inactive)
+  2. Activate or deactivate the input method
+
+  If you want to add support for other input methods, as long as it is possible
+  to achieve the above two things from Emacs Lisp, then you get all the
+  functionalities in =fcitx.el= for free. That said, you just need to provide
+  three functions:
+  1. one that returns the status of the current input method
+  2. one to activate the input method
+  3. one to deactivate the input method
+
+  So we can see that the functionalities provided in this package is very
+  general, which can be easily adapted to used with other input methods.
 * TODO TODO
   - Better Evil support
 
