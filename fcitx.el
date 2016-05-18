@@ -474,8 +474,9 @@ Re-run the setup function after `fcitx' is started.")))
         (dbus-fn (intern (format "fcitx--%S-dbus" func-suffix)))
         (proc-fn (intern (format "fcitx--%S-proc" func-suffix))))
     `(defun ,func-name ()
-       (if fcitx-use-dbus (,dbus-fn)
-         (,proc-fn)))))
+       (unless executing-kbd-macro
+         (if fcitx-use-dbus (,dbus-fn)
+           (,proc-fn))))))
 
 (fcitx--defun-dbus-or-proc activate)
 (fcitx--defun-dbus-or-proc deactivate)
@@ -663,13 +664,11 @@ Re-run the setup function after `fcitx' is started.")))
 
 (defun fcitx--active-evil-states-exit ()
   (and (not (member evil-next-state fcitx-active-evil-states))
-       (not executing-kbd-macro)
        (fcitx--evil-insert-maybe-deactivate)))
 
 (defun fcitx--active-evil-states-entry ()
   (and (not (eq evil-previous-state 'operator))
        (not (member evil-previous-state fcitx-active-evil-states))
-       (not executing-kbd-macro)
        (fcitx--evil-insert-maybe-activate)))
 
 (defun fcitx--evil-modify-hooks (add-p)
