@@ -469,18 +469,17 @@ Re-run the setup function after `fcitx' is started.")))
      (display-warning "fcitx.el" "`fcitx-remote' is not avaiable. Please check your\
  fcitx installtion."))))
 
-(defmacro fcitx--defun-dbus-or-proc (func-suffix)
+(defmacro fcitx--defun-system-interface (func-suffix)
   (let ((func-name (intern (format "fcitx--%S" func-suffix)))
         (dbus-fn (intern (format "fcitx--%S-dbus" func-suffix)))
-        (proc-fn (intern (format "fcitx--%S-proc" func-suffix))))
+        (proc-fn (intern (format "fcitx--%S-proc" func-suffix)))
+        (osx-fn (intern (format "fcitx--%S-osx" func-suffix))))
     `(defun ,func-name ()
        (unless executing-kbd-macro
-         (if fcitx-use-dbus (,dbus-fn)
-           (,proc-fn))))))
-
-(fcitx--defun-dbus-or-proc activate)
-(fcitx--defun-dbus-or-proc deactivate)
-(fcitx--defun-dbus-or-proc active-p)
+         (cond
+          ((eq system-type 'darwin) (,osx-fn))
+          (fcitx-use-dbus (,dbus-fn))
+          (t (,proc-fn)))))))
 
 (defun fcitx--activate-proc ()
   (call-process "fcitx-remote" nil nil nil "-o"))
@@ -518,6 +517,31 @@ Re-run the setup function after `fcitx' is started.")))
                        "org.fcitx.Fcitx.InputMethod"
                        "GetCurrentState")
      2))
+
+;; OSX interface
+(defun fcitx--active-p-osx ()
+  (string=
+   ""
+   (shell-command-to-string
+    "defaults read ~/Library/Preferences/com.apple.HIToolbox.plist \
+AppleSelectedInputSources | grep 'KeyboardLayout Name'")))
+
+(defsubst fcitx--osx-toggle ()
+  (do-applescript "tell application \"System Events\" to keystroke \"z\" \
+using {shift down, control down}"))
+
+(defun fcitx--activate-osx ()
+  (unless (fcitx--active-p-osx)
+    (fcitx--osx-toggle)))
+
+(defun fcitx--deactivate-osx ()
+  (when (fcitx--active-p-osx)
+    (fcitx--osx-toggle)))
+
+;; General interface
+(fcitx--defun-system-interface activate)
+(fcitx--defun-system-interface deactivate)
+(fcitx--defun-system-interface active-p)
 
 (defmacro fcitx--defun-maybe (prefix)
   (let ((var-symbol (intern
