@@ -520,11 +520,13 @@ Re-run the setup function after `fcitx' is started.")))
 
 ;; OSX interface
 (defun fcitx--active-p-osx ()
-  (string=
-   ""
-   (shell-command-to-string
-    "defaults read ~/Library/Preferences/com.apple.HIToolbox.plist \
-AppleSelectedInputSources | grep 'KeyboardLayout Name'")))
+  (let (deactivate-mark)
+    (with-temp-buffer
+      (call-process-shell-command
+       "defaults read ~/Library/Preferences/com.apple.HIToolbox.plist \
+AppleSelectedInputSources" nil t)
+      (goto-char (point-min))
+      (not (re-search-forward "^.*KeyboardLayout Name.*$" nil t)))))
 
 (defsubst fcitx--osx-toggle ()
   (do-applescript "tell application \"System Events\" to keystroke \"z\" \
