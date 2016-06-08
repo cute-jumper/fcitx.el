@@ -4,13 +4,16 @@
 
 Better [[https://github.com/fcitx/fcitx/][fcitx]] integration for Emacs.
 
-Note: it is possible to make =fcitx.el= to work with other input methods since
-=fcitx.el= is not tightly coupled with =fcitx= itself. See the following section
-*Work with Other Input Methods* for more details.
-
 [[./README-zh.org][中文版(需要更新）]]
 
 This package provides a set of functions to make fcitx work better in Emacs.
+
+This is originally designed to be used along with =fcitx= on Linux, but it can
+also be used on other platforms with other input methods.
+- For OSX users, see [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]]
+- For Windows users, see [[https://github.com/cute-jumper/fcitx-remote-for-windows][fcitx-remote-for-windows]]
+- For users who want to add support for other input methods, see the following
+  section: *Work with Other Input methods*
 
 * Setup
   Recommendation: install this package from [[http://melpa.org][melpa]].

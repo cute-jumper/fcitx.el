@@ -48,7 +48,8 @@
 ;; .. 3.5 Extra Functions That are not Enabled in Both Commands
 ;; ..... 3.5.1 I-search Support
 ;; 4 Using D-Bus Interface
-;; 5 TODO TODO
+;; 5 Work with Other Input Methods
+;; 6 TODO TODO
 
 
 ;; [[file:http://melpa.org/packages/fcitx-badge.svg]]
@@ -56,10 +57,17 @@
 
 ;; Better [fcitx] integration for Emacs.
 
-;; [中文版]
+;; [中文版(需要更新）]
 
 ;; This package provides a set of functions to make fcitx work better in
 ;; Emacs.
+
+;; This is originally designed to be used along with `fcitx' on Linux, but
+;; it can also be used on other platforms with other input methods.
+;; - For OSX users, see [fcitx-remote-for-osx]
+;; - For Windows users, see [fcitx-remote-for-windows]
+;; - For users who want to add support for other input methods, see the
+;;   following section: *Work with Other Input methods*
 
 
 ;; [[file:http://melpa.org/packages/fcitx-badge.svg]]
@@ -70,7 +78,13 @@
 
 ;; [fcitx] https://github.com/fcitx/fcitx/
 
-;; [中文版] ./README-zh.org
+;; [中文版(需要更新）] ./README-zh.org
+
+;; [fcitx-remote-for-osx]
+;; https://github.com/CodeFalling/fcitx-remote-for-osx
+
+;; [fcitx-remote-for-windows]
+;; https://github.com/cute-jumper/fcitx-remote-for-windows
 
 
 ;; 1 Setup
@@ -399,7 +413,29 @@
 ;; https://github.com/CodeFalling/fcitx-remote-for-osx
 
 
-;; 5 TODO TODO
+;; 5 Work with Other Input Methods
+;; ===============================
+
+;;   Although this package is named `fcitx.el', it is not tightly coupled
+;;   with `fcitx' itself. `fcitx.el' makes use of the tool `fcitx-remote'
+;;   (or the dbus interface in Linux) to do the following two things:
+;;   1. Know the status of the current input method (active or inactive)
+;;   2. Activate or deactivate the input method
+
+;;   If you want to add support for other input methods, as long as it is
+;;   possible to achieve the above two things from Emacs Lisp, then you get
+;;   all the functionalities in `fcitx.el' for free. That said, you just
+;;   need to provide three functions:
+;;   1. one that returns the status of the current input method
+;;   2. one to activate the input method
+;;   3. one to deactivate the input method
+
+;;   So we can see that the functionalities provided in this package is
+;;   very general, which can be easily adapted to used with other input
+;;   methods.
+
+
+;; 6 TODO TODO
 ;; ===========
 
 ;;   - Better Evil support
