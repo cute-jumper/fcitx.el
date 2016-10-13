@@ -491,7 +491,7 @@ Default value is nil.")
 (defvar fcitx--aggressive-p nil
   "Whether we should disable fcitx whenever we're in the minibuffer.")
 
-(defun fcitx--check-status ()
+(defun fcitx-check-status ()
   (not
    (if (executable-find "fcitx-remote")
        (let ((output
@@ -959,7 +959,7 @@ Re-run the setup function after `fcitx' is started.")))
 (defun fcitx-default-setup ()
   "Default setup for `fcitx'."
   (interactive)
-  (when (fcitx--check-status)
+  (when (fcitx-check-status)
     ;; enable prefix-keys feature
     (fcitx-prefix-keys-setup)
     (fcitx-prefix-keys-turn-on)
@@ -978,7 +978,7 @@ Re-run the setup function after `fcitx' is started.")))
 (defun fcitx-aggressive-setup ()
   "Aggressive setup for `fcitx'."
   (interactive)
-  (when (fcitx--check-status)
+  (when (fcitx-check-status)
     ;; enable prefix-keys feature
     (fcitx-prefix-keys-setup)
     (fcitx-prefix-keys-turn-on)
