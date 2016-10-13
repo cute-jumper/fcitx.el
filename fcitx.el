@@ -491,6 +491,7 @@ Default value is nil.")
 (defvar fcitx--aggressive-p nil
   "Whether we should disable fcitx whenever we're in the minibuffer.")
 
+;;;###autoload
 (defun fcitx-check-status ()
   (not
    (if (executable-find "fcitx-remote")
