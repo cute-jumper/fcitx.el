@@ -526,13 +526,14 @@ Re-run the setup function after `fcitx' is started.")))
   (call-process "fcitx-remote" nil nil nil "-c"))
 
 (defun fcitx--active-p-proc ()
-  (let ((output
-         (let (deactivate-mark)
-           (with-temp-buffer
-             (call-process "fcitx-remote" nil t)
-             (buffer-string)))))
-    (char-equal
-     (aref output 0) ?2)))
+  (ignore-errors
+    (let ((output
+           (let (deactivate-mark)
+             (with-temp-buffer
+               (call-process "fcitx-remote" nil t)
+               (buffer-string)))))
+      (char-equal
+       (aref output 0) ?2))))
 
 (defun fcitx--activate-dbus ()
   (dbus-call-method :session
