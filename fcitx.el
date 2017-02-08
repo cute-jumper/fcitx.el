@@ -513,7 +513,8 @@ Re-run the setup function after `fcitx' is started.")))
     `(defun ,func-name ()
        (unless executing-kbd-macro
          (if fcitx-use-dbus (,dbus-fn)
-           (,proc-fn))))))
+           (ignore-errors
+             (,proc-fn)))))))
 
 (fcitx--defun-dbus-or-proc activate)
 (fcitx--defun-dbus-or-proc deactivate)
@@ -526,14 +527,13 @@ Re-run the setup function after `fcitx' is started.")))
   (call-process "fcitx-remote" nil nil nil "-c"))
 
 (defun fcitx--active-p-proc ()
-  (ignore-errors
-    (let ((output
-           (let (deactivate-mark)
-             (with-temp-buffer
-               (call-process "fcitx-remote" nil t)
-               (buffer-string)))))
-      (char-equal
-       (aref output 0) ?2))))
+  (let ((output
+         (let (deactivate-mark)
+           (with-temp-buffer
+             (call-process "fcitx-remote" nil t)
+             (buffer-string)))))
+    (char-equal
+     (aref output 0) ?2)))
 
 (defun fcitx--activate-dbus ()
   (dbus-call-method :session
