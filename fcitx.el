@@ -500,8 +500,10 @@ Default value is nil.")
                 (with-temp-buffer
                   (call-process "fcitx-remote" nil t)
                   (buffer-string)))))
-         (and (char-equal (aref output 0) ?N)
-              (display-warning "fcitx.el" "`fcitx' is not running. \
+         (and (stringp output)
+              (> (length output) 0)
+              (char-equal (aref output 0) ?N)
+              (display-warning "fcitx.el" "`fcitx' is not running or working properly. \
 Re-run the setup function after `fcitx' is started.")))
      (display-warning "fcitx.el" "`fcitx-remote' is not avaiable. Please check your\
  fcitx installtion."))))
