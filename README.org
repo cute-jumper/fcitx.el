@@ -46,6 +46,11 @@ also be used on other platforms with other input methods.
   : (fcitx-prefix-keys-add "M-m") ; M-m is common in Spacemacs
   : ;; (setq fcitx-use-dbus t) ; uncomment if you're using Linux
 
+  *NOTE*: In Linux, using the =dbus= interface has a better performance. But if
+  you also set =echo-keystrokes=, you may experience a lagging issue. See [[https://github.com/cute-jumper/fcitx.el/issues/30][#30]].
+  If that is something you can't tolerate, don't change the value of
+  =fcitx-use-dbus= to =t=.
+
 * Features
   This package comes with a bunch of features to provide better =fcitx=
   integration for Emacs. For every feature, you can enable or disable it using
@@ -240,7 +245,7 @@ also be used on other platforms with other input methods.
 
 * Using D-Bus Interface
   For Linux users, it is recommended that you set =fcitx-use-dbus= to be =t= to
-  speed up a little:
+  speed up a little (but pay attention to the lagging issue mentioned above):
   : (setq fcitx-use-dbus t)
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
