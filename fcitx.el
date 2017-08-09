@@ -475,6 +475,8 @@
   (declare-function fcitx-eval-expression-turn-on "fcitx")
   (declare-function fcitx-read-char-turn-on "fcitx")
   (declare-function fcitx-read-char-turn-off "fcitx")
+  (declare-function fcitx-read-quoted-char-turn-on "fcitx")
+  (declare-function fcitx-read-quoted-char-turn-off "fcitx")
   (declare-function fcitx-read-key-turn-on "fcitx")
   (declare-function fcitx-read-key-turn-off "fcitx")
   (declare-function fcitx-read-key-sequence-turn-on "fcitx")
