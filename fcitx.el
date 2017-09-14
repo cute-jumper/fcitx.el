@@ -972,6 +972,26 @@ Re-run the setup function after `fcitx' is started.")))
   (interactive)
   (remove-hook 'org-mode-hook #'fcitx--org-mode-hook))
 
+;; ----------------- ;;
+;; read-only buffers ;;
+;; ----------------- ;;
+(fcitx--defun-maybe "read-only")
+
+(defun fcitx--read-only-mode-toggle ()
+  (if buffer-read-only
+      (fcitx--read-only-maybe-deactivate)
+    (fcitx--read-only-maybe-activate)))
+
+;;;###autoload
+(defun fcitx-read-only-turn-on ()
+  (interactive)
+  (add-hook 'read-only-mode-hook #'fcitx--read-only-mode-toggle))
+
+;;;###autoload
+(defun fctix-read-only-turn-off ()
+  (interactive)
+  (remove-hook 'read-only-mode-hook #'fcitx--read-only-mode-toggle))
+
 ;; -------------- ;;
 ;; Setup commands ;;
 ;; -------------- ;;
