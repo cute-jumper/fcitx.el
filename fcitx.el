@@ -167,15 +167,15 @@
 
 ;;   *X* indicates that the corresponding feature is enabled.
 
-;;    Feature                      fcitx-default-setup  fcitx-aggressive-setup 
+;;    Feature                      fcitx-default-setup  fcitx-aggressive-setup
 ;;   --------------------------------------------------------------------------
-;;    Prefix-key                   X                    X                      
-;;    Evil                         X                    X                      
-;;    Character & key input        X                    X                      
-;;    M-x,M-!,M-& and M-:          X                                           
-;;    Disable fcitx in minibuffer                       X                      
-;;    org-speed-command support    X                    X                      
-;;    Isearch                                                                  
+;;    Prefix-key                   X                    X
+;;    Evil                         X                    X
+;;    Character & key input        X                    X
+;;    M-x,M-!,M-& and M-:          X
+;;    Disable fcitx in minibuffer                       X
+;;    org-speed-command support    X                    X
+;;    Isearch
 
 
 ;; 3.2 Features Enabled in Both Setup Commands
@@ -708,6 +708,13 @@ Re-run the setup function after `fcitx' is started.")))
     ad-do-it
     ;; after switch
     (fcitx--evil-switch-buffer-after))
+  (defadvice winum-select-window-by-number(around fcitx--evil-switch-buffer-3)
+    ;; before switch
+    (fcitx--evil-switch-buffer-before)
+    ;; switch buffer
+    ad-do-it
+    ;; after switch
+    (fcitx--evil-switch-buffer-after))
   (defadvice other-window (around fcitx--evil-switch-buffer-2)
     ;; before switch
     (fcitx--evil-switch-buffer-before)
@@ -747,11 +754,16 @@ Re-run the setup function after `fcitx' is started.")))
              (advice-add 'switch-to-buffer :around
                          #'fcitx--evil-switch-buffer)
              (advice-add 'other-window :around
-                         #'fcitx--evil-switch-buffer))
+               #'fcitx--evil-switch-buffer)
+             (advice-add 'winum-select-window-by-number :around
+               #'fcitx--evil-switch-buffer)
+             )
          (ad-enable-advice 'switch-to-buffer 'around 'fcitx--evil-switch-buffer-1)
          (ad-activate 'switch-to-buffer)
          (ad-enable-advice 'other-window 'around 'fcitx--evil-switch-buffer-2)
-         (ad-activate 'other-window)))))
+         (ad-activate 'other-window)
+         (ad-enable-advice 'winum-select-window-by-number 'around 'fcitx--evil-switch-buffer-3)
+         (ad-activate 'winum-select-window-by-number)))))
 
 ;;;###autoload
 (defun fcitx-evil-turn-off ()
@@ -764,11 +776,16 @@ Re-run the setup function after `fcitx' is started.")))
              (advice-remove 'switch-to-buffer
                             #'fcitx--evil-switch-buffer)
              (advice-remove 'other-window
-                            #'fcitx--evil-switch-buffer))
+               #'fcitx--evil-switch-buffer)
+             (advice-remove 'winum-select-window-by-number
+               #'fcitx--evil-switch-buffer)
+             )
          (ad-disable-advice 'switch-to-buffer 'around 'fcitx--evil-switch-buffer-1)
          (ad-activate 'switch-to-buffer)
          (ad-disable-advice 'other-window 'around 'fcitx--evil-switch-buffer-2)
-         (ad-activate 'other-window)))))
+         (ad-activate 'other-window)
+         (ad-disable-advice 'winum-select-window-by-number 'around 'fcitx--evil-switch-buffer-3)
+         (ad-activate 'winum-select-window-by-number)))))
 
 ;; ----------------------------- ;;
 ;; M-x, M-!, M-& and M-: support ;;
