@@ -505,7 +505,7 @@ Default value is nil.")
 (defvar fcitx--aggressive-p nil
   "Whether we should disable fcitx whenever we're in the minibuffer.")
 
-(defvar fcitx-remote-command "fcixt-remote"
+(defvar fcitx-remote-command "fcitx-remote"
   "use fcitx (fcitx-remote) or fcitx5 (fcitx5-remote)")
 
 
