@@ -505,14 +505,18 @@ Default value is nil.")
 (defvar fcitx--aggressive-p nil
   "Whether we should disable fcitx whenever we're in the minibuffer.")
 
+(defvar fcitx-remote-command "fcixt-remote"
+  "use fcitx (fcitx-remote) or fcitx5 (fcitx5-remote)")
+
+
 ;;;###autoload
 (defun fcitx-check-status ()
   (not
-   (if (executable-find "fcitx-remote")
+   (if (executable-find fcitx-remote-command)
        (let ((output
               (let (deactivate-mark)
                 (with-temp-buffer
-                  (call-process "fcitx-remote" nil t)
+                  (call-process fcitx-remote-command nil t)
                   (buffer-string)))))
          (and (stringp output)
               (> (length output) 0)
@@ -537,16 +541,16 @@ Re-run the setup function after `fcitx' is started.")))
 (fcitx--defun-dbus-or-proc active-p)
 
 (defun fcitx--activate-proc ()
-  (call-process "fcitx-remote" nil nil nil "-o"))
+  (call-process fcitx-remote-command nil nil nil "-o"))
 
 (defun fcitx--deactivate-proc ()
-  (call-process "fcitx-remote" nil nil nil "-c"))
+  (call-process fcitx-remote-command nil nil nil "-c"))
 
 (defun fcitx--active-p-proc ()
   (let ((output
          (let (deactivate-mark)
            (with-temp-buffer
-             (call-process "fcitx-remote" nil t)
+             (call-process fcitx-remote-command nil t)
              (buffer-string)))))
     (char-equal
      (aref output 0) ?2)))
