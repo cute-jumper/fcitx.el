@@ -533,13 +533,13 @@ Re-run the setup function after `fcitx' is started.")))
 (defmacro fcitx--defun-dbus-or-proc (func-suffix)
   (let ((func-name (intern (format "fcitx--%S" func-suffix)))
         (dbus-fn (intern (format "fcitx--%S-dbus" func-suffix)))
-        (dbusv5-fn (intern (format "fcitx--%S-dbusv5" func-suffix)))
+        (dbus-v5-fn (intern (format "fcitx--%S-dbus-v5" func-suffix)))
         (proc-fn (intern (format "fcitx--%S-proc" func-suffix))))
     `(defun ,func-name ()
        (unless executing-kbd-macro
          (pcase fcitx-use-dbus
            ('t (,dbus-fn))
-           ('fcitx5 (,dbusv5-fn))
+           ('fcitx5 (,dbus-v5-fn))
            (_ (ignore-errors (,proc-fn))))))))
 
 (fcitx--defun-dbus-or-proc activate)
@@ -583,21 +583,21 @@ Re-run the setup function after `fcitx' is started.")))
                        "GetCurrentState")
      2))
 
-(defun fcitx--activate-dbusv5 ()
+(defun fcitx--activate-dbus-v5 ()
   (dbus-call-method :session
                     "org.fcitx.Fcitx5"
                     "/controller"
                     "org.fcitx.Fcitx.Controller1"
                     "Activate"))
 
-(defun fcitx--deactivate-dbusv5 ()
+(defun fcitx--deactivate-dbus-v5 ()
   (dbus-call-method :session
                     "org.fcitx.Fcitx5"
                     "/controller"
                     "org.fcitx.Fcitx.Controller1"
                     "Deactivate"))
 
-(defun fcitx--active-p-dbusv5 ()
+(defun fcitx--active-p-dbus-v5 ()
   (= (dbus-call-method :session
                        "org.fcitx.Fcitx5"
                        "/controller"
