@@ -121,7 +121,7 @@
 ;;   For Emacs users on Linux:
 ;;   ,----
 ;;   | (fcitx-aggressive-setup)
-;;   | (setq fcitx-use-dbus t)
+;;   | (setq fcitx-use-dbus t)  ;; or set to 'fcitx5 if you use fcitx5
 ;;   `----
 
 ;;   For Emacs users on OS X:
@@ -141,7 +141,7 @@
 ;;   *NOTE*: In Linux, using the `dbus' interface has a better performance.
 ;;   But if you also set `echo-keystrokes', you may experience a lagging
 ;;   issue.  See [#30].  If that is something you can't tolerate, don't
-;;   change the value of `fcitx-use-dbus' to `t'.
+;;   change the value of `fcitx-use-dbus'.
 
 
 ;; [#30] https://github.com/cute-jumper/fcitx.el/issues/30
@@ -410,11 +410,12 @@
 ;; =======================
 
 ;;   For Linux users, it is recommended that you set `fcitx-use-dbus' to be
-;;   `t' to speed up a little (but pay attention to the lagging issue
+;;   non-`nil' to speed up a little (but pay attention to the lagging issue
 ;;   mentioned above):
 ;;   ,----
-;;   | (setq fcitx-use-dbus t)
+;;   | (setq fcitx-use-dbus t)  ;; or 'fcitx5 if you use fcitx5
 ;;   `----
+
 
 ;;   For OSX users who use [fcitx-remote-for-osx], don't set this variable.
 
@@ -489,9 +490,13 @@
 (defvar fcitx-prefix-keys-polling-time 0.1
   "Time interval to execute prefix keys polling function.")
 
-(defvar fcitx-use-dbus nil
-  "Whether we should use D-Bus version or not.
-Default value is nil.")
+(defcustom fcitx-use-dbus nil
+  "Whether we should use D-Bus version (and which specific version) or not.
+Default value is nil."
+  :type '(choice (const :tag "No" nil)
+                 (const :tag "Yes" t)
+                 (const :tag "Yes (fcitx5)" fcitx5))
+  :group 'fcitx)
 
 (defvar fcitx-active-evil-states '(insert emacs)
   "Fcitx should be activated in those evil states.")
@@ -529,12 +534,14 @@ Re-run the setup function after `fcitx' is started.")))
 (defmacro fcitx--defun-dbus-or-proc (func-suffix)
   (let ((func-name (intern (format "fcitx--%S" func-suffix)))
         (dbus-fn (intern (format "fcitx--%S-dbus" func-suffix)))
+        (dbus-v5-fn (intern (format "fcitx--%S-dbus-v5" func-suffix)))
         (proc-fn (intern (format "fcitx--%S-proc" func-suffix))))
     `(defun ,func-name ()
        (unless executing-kbd-macro
-         (if fcitx-use-dbus (,dbus-fn)
-           (ignore-errors
-             (,proc-fn)))))))
+         (pcase fcitx-use-dbus
+           ('t (,dbus-fn))
+           ('fcitx5 (,dbus-v5-fn))
+           (_ (ignore-errors (,proc-fn))))))))
 
 (fcitx--defun-dbus-or-proc activate)
 (fcitx--defun-dbus-or-proc deactivate)
@@ -575,6 +582,28 @@ Re-run the setup function after `fcitx' is started.")))
                        "/inputmethod"
                        "org.fcitx.Fcitx.InputMethod"
                        "GetCurrentState")
+     2))
+
+(defun fcitx--activate-dbus-v5 ()
+  (dbus-call-method :session
+                    "org.fcitx.Fcitx5"
+                    "/controller"
+                    "org.fcitx.Fcitx.Controller1"
+                    "Activate"))
+
+(defun fcitx--deactivate-dbus-v5 ()
+  (dbus-call-method :session
+                    "org.fcitx.Fcitx5"
+                    "/controller"
+                    "org.fcitx.Fcitx.Controller1"
+                    "Deactivate"))
+
+(defun fcitx--active-p-dbus-v5 ()
+  (= (dbus-call-method :session
+                       "org.fcitx.Fcitx5"
+                       "/controller"
+                       "org.fcitx.Fcitx.Controller1"
+                       "State")
      2))
 
 (defmacro fcitx--defun-maybe (prefix)
