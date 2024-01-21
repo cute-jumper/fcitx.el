@@ -34,7 +34,7 @@ also be used on other platforms with other input methods.
 
   For Emacs users on Linux:
   : (fcitx-aggressive-setup)
-  : (setq fcitx-use-dbus t)
+  : (setq fcitx-use-dbus t)  ;; or set to 'fcitx5 if you use fcitx5
 
   For Emacs users on OS X:
   : (fcitx-aggressive-setup)
@@ -49,7 +49,7 @@ also be used on other platforms with other input methods.
   *NOTE*: In Linux, using the =dbus= interface has a better performance. But if
   you also set =echo-keystrokes=, you may experience a lagging issue. See [[https://github.com/cute-jumper/fcitx.el/issues/30][#30]].
   If that is something you can't tolerate, don't change the value of
-  =fcitx-use-dbus= to =t=.
+  =fcitx-use-dbus=.
 
 * Features
   This package comes with a bunch of features to provide better =fcitx=
@@ -244,9 +244,9 @@ also be used on other platforms with other input methods.
     : (fcitx-isearch-turn-on)
 
 * Using D-Bus Interface
-  For Linux users, it is recommended that you set =fcitx-use-dbus= to be =t= to
+  For Linux users, it is recommended that you set =fcitx-use-dbus= to be non-=nil= to
   speed up a little (but pay attention to the lagging issue mentioned above):
-  : (setq fcitx-use-dbus t)
+  : (setq fcitx-use-dbus t)  ;; or 'fcitx5 if you use fcitx5
 
   For OSX users who use [[https://github.com/CodeFalling/fcitx-remote-for-osx][fcitx-remote-for-osx]], don't set this variable.
 

@@ -410,11 +410,12 @@
 ;; =======================
 
 ;;   For Linux users, it is recommended that you set `fcitx-use-dbus' to be
-;;   non nil to speed up a little (but pay attention to the lagging issue
+;;   non-`nil' to speed up a little (but pay attention to the lagging issue
 ;;   mentioned above):
 ;;   ,----
-;;   | (setq fcitx-use-dbus t)   ;; or 'fcitx5 if you use fcitx5
+;;   | (setq fcitx-use-dbus t)  ;; or 'fcitx5 if you use fcitx5
 ;;   `----
+
 
 ;;   For OSX users who use [fcitx-remote-for-osx], don't set this variable.
 
